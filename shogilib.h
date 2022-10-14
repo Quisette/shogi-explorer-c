@@ -7,10 +7,15 @@
 
 // type of pieces 
 enum PieceType{ FU,KYO,KEI,GIN,KIN,KAKU,HI,GYOKU };
+enum PieceSFEN{p,l,n,s,g,b,r,k};
 // shows the owner of the piece
-enum PieceOwner{SENTE, GOTE};
-
-struct Piece{
+enum PieceOwner{SENTE = 0, GOTE = 1};
+struct PiecePrototype{
+    char toSfen;
+    char toKIF;
+    char** PossibleMovement;
+};
+struct PieceOnBoard{
     //indicates if there is a piece. if the position is empty, this bool should be turned down.
     // when active is false, the program should not read other value of this object.
     bool active;
@@ -22,7 +27,10 @@ struct Piece{
     bool promoted;     
 };
 struct Board{
-   Piece board[8][8]; 
+    //
+   PieceOnBoard board[9][9]; 
+   // Komadais for each player
+   Komadai senteKomadai, goteKomadai;
 };
 struct Komadai{
     int komaList[8];
@@ -31,8 +39,11 @@ struct Komadai{
     EX: komaList[3] stores the number of GIN pieces 
     */
 };
+
 // reads KIF file into the program.
-void readKIF( FILE *File);
+void readKIF( FILE *file);
+// shows the current sfen (map of current bannmenn)
+char* toSFEN(Board);
 // shows the board based on current database
 void renderBoard();
 // let the user browse through shogi moves
