@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include"utilities.h"
 #include <math.h>
 #include <stdbool.h>
-#include <wchar.h>
+
 #ifndef SHOGI_LIB
 #define SHOGI_LIB
 #define SFEN_REGEX  "[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9} [wb] [-plnsgkrbPLNSGKRB1-9]+ [1-9]+"
-
 // type of pieces
 
 enum PieceType
@@ -36,7 +36,7 @@ enum PieceOwner
 struct PiecePrototype
 {
     char sfen[2];
-    wchar_t*  kif[2];
+    char*  kif[2];
     char **moveList;
     char **promotedMoveList;
 };
@@ -89,6 +89,4 @@ void userInputKifu();
 // back to the origin from user inputs
 void returnToOrigin();
 bool SFENParse(char *sfen);
-char Regex(char* textToCheck, const char* regexStr);
-
 #endif // SHOGI_LIB
