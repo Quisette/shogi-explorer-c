@@ -33,10 +33,10 @@ enum PieceOwner
     SENTE = 0,
     GOTE = 1
 };
-struct PiecePrototype
+struct PieceAttr
 {
     char sfen[2];
-    char*  kif[2];
+    char*  displayChar[2];
     char **moveList;
     char **promotedMoveList;
 };
@@ -69,7 +69,8 @@ struct Board
 };
 struct SfenData
 {
-    char *bannmenn;
+    
+    char *matrix[9];
     char turn; // turn
     char *mochiKomaList;
     int moveNumber;
@@ -79,7 +80,7 @@ void initialize();
 // reads KIF file into the program.
 void readKIF(FILE *file);
 // shows the current sfen (map of current bannmenn)
-char *toSFEN(struct Board board);
+char *exportToSFEN(struct Board board);
 // shows the board based on current database
 void renderBoard();
 // let the user browse through shogi moves
@@ -89,4 +90,6 @@ void userInputKifu();
 // back to the origin from user inputs
 void returnToOrigin();
 bool SFENParse(char *sfen);
+void SFENLoad(struct SfenData data);
+int findPieceNumber(char c );
 #endif // SHOGI_LIB

@@ -1,1 +1,4 @@
 *.o
+main
+.vscode/
+.vscode/tasks.json

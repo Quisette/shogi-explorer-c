@@ -7,4 +7,4 @@ clean:
 	rm *.o
 
 FORCE:
-	$(CC) main.c shogilib.c utilities.c -o main.o && ./main.o
+	$(CC) main.c -g shogilib.c -g  utilities.c -g -o main && ./main

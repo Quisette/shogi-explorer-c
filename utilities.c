@@ -11,7 +11,7 @@ char Regex(char *textToCheck, const char *regexStr)
     int actualReturnValue = -1;
     char messageBuffer[100];
 
-    /* CompiREG_NOMATCHle regular expression */
+    /* Compile regular expression */
     reti = regcomp(&compiledRegex, regexStr, REG_EXTENDED | REG_ICASE);
     if (reti)
     {
