@@ -13,12 +13,18 @@ int main(int argc, char** argv){
     initialize();
   
     if(!SFENParse(testSfen)) renderBoard();
-    puts("-----------------------");
-    if(!SFENParse(nextSfen)) renderBoard();
+    // puts("-----------------------");
+    // if(!SFENParse(nextSfen)) renderBoard();
     // scrollKifu();
+    while (true){
     userInput();
+    makeMove(input.init, input.final, 0);
+    renderBoard();
+    }
     // printf("%d%d\n",coordTransfer('X',input.init.X),coordTransfer('Y',input.init.Y));
-    printf("%c\n",getPieceBycoord(input.init.X, input.init.Y).type);
+    
+    // renderBoard();
+    
     return 0;
 }
 

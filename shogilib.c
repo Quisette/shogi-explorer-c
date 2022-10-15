@@ -87,26 +87,25 @@ void SFENLoad(struct SfenData data)
             {
 
             case 'p':case 'l':case 'n':case 's':case 'g':case 'b':case 'r':case 'k':
-                bannmenn.board[i][currentIndex].type = data.matrix[i][it_char];
-                bannmenn.board[i][currentIndex].owner = GOTE;
+                bannmenn.pieces[i][currentIndex].type = data.matrix[i][it_char];
+                
                 currentIndex++;
                 break;
             case 'P':case 'L':case 'N':case 'S':case 'G':case 'B':case 'R':case 'K':
-                bannmenn.board[i][currentIndex].type = data.matrix[i][it_char];
-                bannmenn.board[i][currentIndex].owner = SENTE;
+                bannmenn.pieces[i][currentIndex].type = data.matrix[i][it_char];
+                
                 currentIndex++;
                 break;
             case '1':case '2':case '3':case '4':case '5':case '6':case '7':case '8':case '9': // numbers (spaces)
                 for (int k = 0; k < (data.matrix[i][it_char] - '0'); k++)
                 {
-                    bannmenn.board[i][currentIndex].type = ' ';
-                    bannmenn.board[i][currentIndex].promoted = 0;
-                    bannmenn.board[i][currentIndex].owner = 0;
+                    bannmenn.pieces[i][currentIndex].type = ' ';
+                    bannmenn.pieces[i][currentIndex].promoted = 0;
                     currentIndex++;
                 }
                 break;
             case '+':
-                bannmenn.board[i][currentIndex].promoted = true;
+                bannmenn.pieces[i][currentIndex].promoted = true;
                 break;
             default:
                 break;
@@ -120,11 +119,11 @@ void SFENLoad(struct SfenData data)
         char objectChar = data.mochiKomaList[it_char];
         if(isdigit(objectChar)) komaNumber = ctoi(objectChar);
         else if (isupper(objectChar)) {
-            bannmenn.senteKomadai.komaList[findPieceNumber(objectChar)]+= komaNumber;
+            bannmenn.senteKomadai.komaList[getPieceNumber(objectChar)]+= komaNumber;
             komaNumber = 1;
             }
         else if(islower(objectChar)) {
-            bannmenn.goteKomadai.komaList[findPieceNumber(objectChar)]+= komaNumber ;
+            bannmenn.goteKomadai.komaList[getPieceNumber(objectChar)]+= komaNumber ;
             komaNumber = 1;
             }
     }
@@ -133,7 +132,7 @@ void SFENLoad(struct SfenData data)
     // }
 
 }
-int findPieceNumber(char c){
+int getPieceNumber(char c){
     c = tolower(c);
     switch(c){
         case 'p':
@@ -164,31 +163,33 @@ int findPieceNumber(char c){
 }
 void renderBoard()
 {
+    printf("\033c");
     //displays data
+    puts("------------------");
 
-    printf("第%d手、",bannmenn.moveNumber);
+    printf("%d手目、",bannmenn.moveNumber);
     (bannmenn.turn)? printf("後手番です\n"): printf("先手番です\n");
-    puts("");
+    puts("------------------");
     //displays Board 
     for (int i = 0; i < 9; i++)
     {
         for (int j = 0; j < 9; j++)
         {
-            if(bannmenn.board[i][j].type == ' '){
+            if(bannmenn.pieces[i][j].type == ' '){
                 printf("  ");
             }else{
-                if(bannmenn.board[i][j].owner == SENTE)
-                    printColor(BLUE, pieceAttr[findPieceNumber(bannmenn.board[i][j].type)].displayChar[bannmenn.board[i][j].promoted]);
+                if(!owner(bannmenn.pieces[i][j].type))
+                    printColor(BLUE, getPieceName(bannmenn.pieces[i][j]));
                 else
-                    printColor(RED, pieceAttr[findPieceNumber(bannmenn.board[i][j].type)].displayChar[bannmenn.board[i][j].promoted]);
+                    printColor(RED,  getPieceName(bannmenn.pieces[i][j]));
 
             }
         }
         puts("");
     }
+    puts("------持  駒------");
 
     // displays mochiKoma
-    puts("");
     bool komaEmpty = 1;
     printColor(BLUE,"先手  ");
     for (int i = GYOKU; i >= FU; i--){
@@ -197,16 +198,18 @@ void renderBoard()
         printColor(BLUE,pieceAttr[i].displayChar[0]);
     } 
     if(komaEmpty) printColor(BLUE,"なし");
-    printf("\n");
+
     komaEmpty = 1;
-    printColor(RED,"後手  ");
+    printColor(RED,"\n後手  ");
     for (int i = GYOKU; i >= FU; i--){
-        if(bannmenn.senteKomadai.komaList[i] != 0) komaEmpty = 0;
+        if(bannmenn.goteKomadai.komaList[i] != 0) komaEmpty = 0;
         for (int j = 1; j <= bannmenn.goteKomadai.komaList[i]; j++)
         printColor(RED,pieceAttr[i].displayChar[0]);
     } 
-    if(komaEmpty) printColor(RED,"なし");
-    printf("\n");
+    if(komaEmpty) printColor(RED,"なし") ;
+ 
+    puts("\n------------------");
+
 }
 // let the user browse through shogi moves
 void scrollKifu()
@@ -232,7 +235,7 @@ void userInput()
     input.final.Y = ctoi(*(token + 1)) ;
     token = strtok(NULL, " ");
     input.type = token;
-    printf("%d%d, %d%d , %s", input.init.X, input.init.Y,  input.final.X, input.final.Y,input.type);
+    // printf("%d%d, %d%d , %s", input.init.X, input.init.Y,  input.final.X, input.final.Y,input.type);
 }
 // back to the origin from user inputs
 void returnToOrigin()
@@ -245,6 +248,34 @@ char coordTransfer(char axis, char input){
     else return input-1;
 }
 
-struct PieceOnBoard getPieceBycoord(char x, char y){
-    return bannmenn.board[coordTransfer('Y',y)][coordTransfer('X',x)];
+struct PieceOnBoard *getPieceBycoord(struct Location loc){
+    return &bannmenn.pieces[coordTransfer('Y',loc.Y)][coordTransfer('X',loc.X)];
+}
+
+char* getPieceName(struct PieceOnBoard piece){
+    return pieceAttr[getPieceNumber(piece.type)].displayChar[piece.promoted];
+}
+void makeMove(struct Location init, struct Location final, bool promote){
+
+    if(owner(getPieceBycoord(final)->type) == SENTE){
+       bannmenn.goteKomadai.komaList[getPieceNumber(getPieceBycoord(final)->type)]++; 
+    }else{
+       bannmenn.senteKomadai.komaList[getPieceNumber(getPieceBycoord(final)->type)]++; 
+
+    }
+    getPieceBycoord(final)->promoted = promote;
+    getPieceBycoord(final)->type = getPieceBycoord(init)->type;
+  
+    getPieceBycoord(init)->type = ' ';
+    bannmenn.moveNumber++;
+    bannmenn.turn = !bannmenn.turn;
+
+
+}
+
+char owner(char pieceType){
+    if (pieceType == ' ') 
+        return -1;
+    else if(isupper(pieceType)) return SENTE; 
+    else return GOTE;
 }

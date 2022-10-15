@@ -39,11 +39,9 @@ struct PieceOnBoard
 {
     // indicates if there is a piece. if the position is empty, this bool should be turned down.
     //  when active is false, the program should not read other value of this object.
-    bool active;
     // shows the type of the current piece
     char type;
     // shows the owner of piece
-    bool owner;
     // shows if this piece is promoted
     bool promoted;
 };
@@ -58,7 +56,7 @@ struct Komadai
 struct Board
 {
     //
-    struct PieceOnBoard board[9][9];
+    struct PieceOnBoard pieces[9][9];
     // Komadais for each player
     struct Komadai senteKomadai, goteKomadai;
     int moveNumber;
@@ -98,7 +96,11 @@ void userInput();
 void returnToOrigin();
 bool SFENParse(char *sfen);
 void SFENLoad(struct SfenData data);
-int findPieceNumber(char c );
+int getPieceNumber(char c );
 char coordTransfer(char axis, char input);
-struct PieceOnBoard getPieceBycoord(char x, char y);
+// struct Location coordTransfer(struct Location loc);
+struct PieceOnBoard *getPieceBycoord(struct Location loc);
+char* getPieceName(struct PieceOnBoard piece);
+void makeMove(struct Location init, struct Location final, bool promote);
+char owner(char pieceType);
 #endif // SHOGI_LIB
