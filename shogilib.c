@@ -2,12 +2,11 @@
 #include <stdlib.h>
 #include <math.h>
 #include "shogilib.h"
-#include <wchar.h>
 #include <string.h>
-#include <regex.h>
 #include <ctype.h>
 struct PieceAttr pieceAttr[14];
 struct Board bannmenn;
+struct UserInput input;
 // initialize the project;
 void initialize()
 {
@@ -58,18 +57,11 @@ bool SFENParse(char *sfen)
         sfenData.mochiKomaList = token;
         token = strtok(NULL, delim);
         sfenData.moveNumber = atoi(token);
-        // puts("");
-        // printf("bannmenn: %s\n", rawSfenBoard);
-        // printf("turn:  %c\n", sfenData.turn);
-        // printf("mochiKoma:  %s\n", sfenData.mochiKomaList);
-        // printf("move: %d\n", sfenData.moveNumber);
-        // puts("");
 
         token = strtok(rawSfenBoard, "/");
         for (int i = 0; i < 9; i++)
         {
             sfenData.matrix[i] = token;
-            // printf("%s\n", sfenData.matrix[i]);
             token = strtok(NULL, "/");
         }
     }
@@ -81,15 +73,17 @@ bool SFENParse(char *sfen)
 // shows the board based on current database
 void SFENLoad(struct SfenData data)
 {
-    puts("");
+    /* turn and move number parsing */
+    (data.turn == 'w')?bannmenn.turn = SENTE:GOTE;
+    bannmenn.moveNumber = data.moveNumber;
+    /* main board parsing */
     for (int i = 0; i < 9; i++)
     {
-        int currentIndex = 0;
-        // printf("%d ", (int)strlen(data.matrix[i]));
+        int currentIndex = 0; 
         for (int it_char = 0; it_char < strlen(data.matrix[i]); it_char++)
         {                                    // each row
-            // printf("%c", data.matrix[i][it_char]); // each character
-            switch (data.matrix[i][it_char])
+            
+            switch (data.matrix[i][it_char])// each character
             {
 
             case 'p':case 'l':case 'n':case 's':case 'g':case 'b':case 'r':case 'k':
@@ -103,10 +97,8 @@ void SFENLoad(struct SfenData data)
                 currentIndex++;
                 break;
             case '1':case '2':case '3':case '4':case '5':case '6':case '7':case '8':case '9': // numbers (spaces)
-          //faulty. Needs to be fixed.
                 for (int k = 0; k < (data.matrix[i][it_char] - '0'); k++)
                 {
-                    // printf("[%d]", currentIndex);
                     bannmenn.board[i][currentIndex].type = ' ';
                     bannmenn.board[i][currentIndex].promoted = 0;
                     bannmenn.board[i][currentIndex].owner = 0;
@@ -121,19 +113,23 @@ void SFENLoad(struct SfenData data)
             }
             
         }
-        // puts("");
-        
     }
-    // for (int i = 0; i < 9; i++)
-    // {
-    //     for (int j = 0; j < 9; j++)
-    //     {
-    //         if(bannmenn.board[i][j].type == ' '){
-    //             printf("[   ]");
-    //         }else
-    //         printf("[%d%c%d]", bannmenn.board[i][j].promoted, bannmenn.board[i][j].type, bannmenn.board[i][j].owner);
-    //     }
-    //     puts("");
+    /* Mochikoma Parsing */
+    int komaNumber = 1;
+    for (int it_char = 0; it_char <strlen(data.mochiKomaList); it_char++){
+        char objectChar = data.mochiKomaList[it_char];
+        if(isdigit(objectChar)) komaNumber = ctoi(objectChar);
+        else if (isupper(objectChar)) {
+            bannmenn.senteKomadai.komaList[findPieceNumber(objectChar)]+= komaNumber;
+            komaNumber = 1;
+            }
+        else if(islower(objectChar)) {
+            bannmenn.goteKomadai.komaList[findPieceNumber(objectChar)]+= komaNumber ;
+            komaNumber = 1;
+            }
+    }
+    // for(int i = 0; i < 8; i++) {
+    //     printf("%d %d %d\n",i, bannmenn.senteKomadai.komaList[i],bannmenn.goteKomadai.komaList[i]);
     // }
 
 }
@@ -168,6 +164,12 @@ int findPieceNumber(char c){
 }
 void renderBoard()
 {
+    //displays data
+
+    printf("第%d手、",bannmenn.moveNumber);
+    (bannmenn.turn)? printf("後手番です\n"): printf("先手番です\n");
+    puts("");
+    //displays Board 
     for (int i = 0; i < 9; i++)
     {
         for (int j = 0; j < 9; j++)
@@ -181,20 +183,68 @@ void renderBoard()
                     printColor(RED, pieceAttr[findPieceNumber(bannmenn.board[i][j].type)].displayChar[bannmenn.board[i][j].promoted]);
 
             }
-            // printf("[ %s ]", pieceAttr[findPieceNumber(bannmenn.board[i][j].type)].displayChar[bannmenn.board[i][j].promoted]);
         }
         puts("");
     }
+
+    // displays mochiKoma
+    puts("");
+    bool komaEmpty = 1;
+    printColor(BLUE,"先手  ");
+    for (int i = GYOKU; i >= FU; i--){
+        if(bannmenn.senteKomadai.komaList[i] != 0) komaEmpty = 0;
+        for (int j = 1; j <= bannmenn.senteKomadai.komaList[i]; j++)
+        printColor(BLUE,pieceAttr[i].displayChar[0]);
+    } 
+    if(komaEmpty) printColor(BLUE,"なし");
+    printf("\n");
+    komaEmpty = 1;
+    printColor(RED,"後手  ");
+    for (int i = GYOKU; i >= FU; i--){
+        if(bannmenn.senteKomadai.komaList[i] != 0) komaEmpty = 0;
+        for (int j = 1; j <= bannmenn.goteKomadai.komaList[i]; j++)
+        printColor(RED,pieceAttr[i].displayChar[0]);
+    } 
+    if(komaEmpty) printColor(RED,"なし");
+    printf("\n");
 }
 // let the user browse through shogi moves
 void scrollKifu()
 {
+    
+
 }
 // let user enter the move to interact with the shogi board
-void userInputKifu()
+void userInput()
 {
+    char rawInput[20] ;
+    
+    char *token;
+    fgets(rawInput,20,stdin);
+    if(Regex(rawInput,INPUT_REGEX) == 1){
+        puts("Format Error. "); return;
+    }
+    token = strtok(rawInput, " ");
+    input.init.X = ctoi(*token);
+    input.init.Y = ctoi(*(token + 1)) ;
+    token = strtok(NULL, " ");
+    input.final.X = ctoi(*token);
+    input.final.Y = ctoi(*(token + 1)) ;
+    token = strtok(NULL, " ");
+    input.type = token;
+    printf("%d%d, %d%d , %s", input.init.X, input.init.Y,  input.final.X, input.final.Y,input.type);
 }
 // back to the origin from user inputs
 void returnToOrigin()
 {
+}
+
+char coordTransfer(char axis, char input){
+    if(axis != 'X' && axis != 'Y') return -1;
+    else if(axis == 'X') return 9 - input;
+    else return input-1;
+}
+
+struct PieceOnBoard getPieceBycoord(char x, char y){
+    return bannmenn.board[coordTransfer('Y',y)][coordTransfer('X',x)];
 }

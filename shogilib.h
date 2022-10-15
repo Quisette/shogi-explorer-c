@@ -7,6 +7,7 @@
 #ifndef SHOGI_LIB
 #define SHOGI_LIB
 #define SFEN_REGEX  "[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9} [wb] [-plnsgkrbPLNSGKRB1-9]+ [1-9]+"
+#define INPUT_REGEX "[1-9]{1,2}\\s[1-9]{1,2}\\s[a-z]{2,5}"
 // type of pieces
 
 enum PieceType
@@ -19,12 +20,6 @@ enum PieceType
     KAKU,
     HI,
     GYOKU,
-    TO,
-    NKYO,
-    NKEI,
-    NGIN,
-    UMA,
-    RYU
 };
 
 // shows the owner of the piece
@@ -66,6 +61,8 @@ struct Board
     struct PieceOnBoard board[9][9];
     // Komadais for each player
     struct Komadai senteKomadai, goteKomadai;
+    int moveNumber;
+    bool turn;
 };
 struct SfenData
 {
@@ -75,6 +72,16 @@ struct SfenData
     char *mochiKomaList;
     int moveNumber;
 };
+struct Location{
+    char X;
+    char Y;
+};
+struct UserInput{
+    char* type;
+    struct Location init;
+    struct Location final;
+};
+
 // initialize the project;
 void initialize();
 // reads KIF file into the program.
@@ -86,10 +93,12 @@ void renderBoard();
 // let the user browse through shogi moves
 void scrollKifu();
 // let user enter the move to interact with the shogi board
-void userInputKifu();
+void userInput();
 // back to the origin from user inputs
 void returnToOrigin();
 bool SFENParse(char *sfen);
 void SFENLoad(struct SfenData data);
 int findPieceNumber(char c );
+char coordTransfer(char axis, char input);
+struct PieceOnBoard getPieceBycoord(char x, char y);
 #endif // SHOGI_LIB

@@ -2,6 +2,7 @@
 #include<regex.h>
 #include<stdlib.h>
 #include"utilities.h"
+#include<ctype.h>
 
 
 char Regex(char *textToCheck, const char *regexStr)
@@ -45,3 +46,7 @@ char Regex(char *textToCheck, const char *regexStr)
 void printColor(int colorCode, char* text){
         printf("%c[%dm%s%c[0m", 0x1B, colorCode,text,0x1B);
     }
+char ctoi(char c){
+    if(isdigit(c)) return c - '0';
+    else return '!';
+}
