@@ -265,7 +265,7 @@ void userInput()
     input.final.X = ctoi(*token);
     input.final.Y = ctoi(*(token + 1));
     token = strtok(NULL, " ");
-    input.type = token;
+    input.type = strtok(token, "\n");
 
     // printf("%d%d, %d%d , %s", input.init.X, input.init.Y,  input.final.X, input.final.Y,input.type);
 }
@@ -302,7 +302,6 @@ void makeMove(struct Location init, struct Location final, bool promote)
     }
     else
     {
-        // printf("%d\n",getPieceNumber(getPieceBycoord(final)->type));
         bannmenn.senteKomadai.komaList[getPieceNumber(getPieceBycoord(final)->type)]++;
     }
 
@@ -329,6 +328,11 @@ bool validMove(struct Location init, struct Location final)
     struct Location diff;
     struct Location testPos;
     struct PieceOnBoard *piece = getPieceBycoord(init);
+    // checks if entered piece name is correct
+    if( strcmp(input.type,pieceAttr[getPieceNumber(piece->type)].name[piece->promoted])  != 0){
+        printf("your piece name is not valid.\n");
+        return false;
+    }
     // prevent accessing empty spaces
     if (piece->type == ' ')
     {
@@ -462,7 +466,7 @@ bool kinMove(struct Location loc, bool owner)
 bool gyokuMove(struct Location loc){
     return (max(abs(loc.X), abs(loc.Y)) == 1);
 }
-int getPieceByName(char* str)
+int getPieceNumByName(char* str)
 {
     
     for( int i = FU; i <= GYOKU; i++){

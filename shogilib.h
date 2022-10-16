@@ -112,5 +112,5 @@ struct Location *moveDiff(struct Location init, struct Location final);
 bool kinMove(struct Location loc, bool owner);
 bool validMove(struct Location init, struct Location final);
 bool gyokuMove(struct Location loc);
-int getPieceByName(char* str);
+int getPieceNumByName(char* str);
 #endif // SHOGI_LIB
