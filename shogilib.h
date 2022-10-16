@@ -7,7 +7,9 @@
 #ifndef SHOGI_LIB
 #define SHOGI_LIB
 #define SFEN_REGEX  "[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9} [wb] [-plnsgkrbPLNSGKRB1-9]+ [1-9]+"
-#define INPUT_REGEX "[1-9]{1,2}\\s[1-9]{1,2}\\s[a-z]{2,5}"
+#define INPUT_REGEX "[1-9]{1,2}\\s[1-9]{1,2}"
+#define INPUT_REGEX_FULL "[1-9]{1,2}\\s[1-9]{1,2}\\s[a-z]{2,5}"
+
 // type of pieces
 
 enum PieceType
@@ -71,8 +73,8 @@ struct SfenData
     int moveNumber;
 };
 struct Location{
-    char X;
-    char Y;
+    int X;
+    int Y;
 };
 struct UserInput{
     char* type;
@@ -86,7 +88,7 @@ void initialize();
 void readKIF(FILE *file);
 // shows the current sfen (map of current bannmenn)
 char *exportToSFEN(struct Board board);
-// shows the board based on current database
+// shows the board based on current database+
 void renderBoard();
 // let the user browse through shogi moves
 void scrollKifu();
@@ -103,4 +105,7 @@ struct PieceOnBoard *getPieceBycoord(struct Location loc);
 char* getPieceName(struct PieceOnBoard piece);
 void makeMove(struct Location init, struct Location final, bool promote);
 char owner(char pieceType);
+struct Location *moveDiff(struct Location init, struct Location final);
+bool kinMove(struct Location loc, bool owner);
+bool validMove(struct Location init, struct Location final, struct PieceOnBoard piece);
 #endif // SHOGI_LIB

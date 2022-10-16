@@ -85,7 +85,7 @@ void SFENLoad(struct SfenData data)
             
             switch (data.matrix[i][it_char])// each character
             {
-
+                //merge uppercase with lowercase
             case 'p':case 'l':case 'n':case 's':case 'g':case 'b':case 'r':case 'k':
                 bannmenn.pieces[i][currentIndex].type = data.matrix[i][it_char];
                 
@@ -163,7 +163,7 @@ int getPieceNumber(char c){
 }
 void renderBoard()
 {
-    printf("\033c");
+    printf("\033c"); // clear screen
     //displays data
     puts("------------------");
 
@@ -224,8 +224,9 @@ void userInput()
     
     char *token;
     fgets(rawInput,20,stdin);
-    if(Regex(rawInput,INPUT_REGEX) == 1){
-        puts("Format Error. "); return;
+    while(Regex(rawInput,INPUT_REGEX) == 1){
+        puts("Format Error. \nPlease enter the correct format."); 
+        fgets(rawInput,20,stdin);
     }
     token = strtok(rawInput, " ");
     input.init.X = ctoi(*token);
@@ -279,3 +280,109 @@ char owner(char pieceType){
     else if(isupper(pieceType)) return SENTE; 
     else return GOTE;
 }
+bool validMove(struct Location init, struct Location final, struct PieceOnBoard piece){
+    struct Location diff;
+    struct Location testPos;
+    //prevent accessing empty spaces
+    if(piece.type == ' ') 
+        return false;
+    // prevent taking owned pieces
+    if(owner(getPieceBycoord(final)->type) == owner(getPieceBycoord(init)->type))
+        return false;
+    
+    else {
+        diff.X =  final.X - init.X; 
+        diff.Y = final.Y - init.Y;
+        switch (tolower(piece.type)){
+            case 'p': //FU
+                if(owner(piece.type) == SENTE){
+                    if(diff.Y  == -1 && diff.X == 0) 
+                    return true;
+                }
+                else if(diff.Y == 1 && diff.X == 0) 
+                return true;
+            break;
+            case 'l': //KYO
+                if(owner(piece.type) == SENTE){
+                    if(diff.Y  < 0 && diff.X == 0) 
+                    return true;
+                }
+                else if (diff.Y  > 0 && diff.X == 0) 
+                    return true;
+            break;
+            case 'n': //KEI
+            if(owner(piece.type) == SENTE){
+                    if(diff.Y  == -2 && abs(diff.X) == 1) 
+                    return true;
+                }
+                else if(diff.Y  == 2 && abs(diff.X) == 1) 
+                return true;
+                    
+            break;
+            case 's': //GIN
+                if(owner(piece.type) == SENTE){
+                    if(abs(diff.Y) == 1 && abs(diff.X) == 1 || (diff.Y == -1  && diff.X == 0)) 
+                    return true;
+                }
+                else if(abs(diff.Y) == 1 && abs(diff.X) == 1 || (diff.Y == 1 && diff.X == 0)) 
+                return true;
+                        
+            break;
+            case 'g'://KIN
+            if(owner(piece.type) == SENTE){
+                    return kinMove(diff,SENTE);
+                }
+                else return kinMove(diff,GOTE);
+            break;
+            case 'b'://KAKU
+                if(diff.X == diff.Y) {
+                    testPos.X = init.X;
+                    testPos.Y = init.Y;
+                    for(int i = 1; i < abs(diff.X); i++){
+                        testPos.X += abs(diff.X)/diff.X;
+                        testPos.Y += abs(diff.Y)/diff.Y;
+                        if(getPieceBycoord(testPos)->type != ' ') 
+                            return false;   
+                    }
+                    return true;
+                }
+            break;
+            case 'r':// HI
+                  if(diff.X * diff.Y == 0) {
+                    testPos.X = init.X;
+                    testPos.Y = init.Y;
+                    for(int i = 1; i < max(abs(diff.X),abs(diff.Y)); i++){
+                        if(diff.X != 0)
+                            testPos.X += abs(diff.X)/diff.X;
+                        if(diff.Y != 0)
+                            testPos.Y += abs(diff.Y)/diff.Y;
+                        if(getPieceBycoord(testPos)->type != ' ') 
+                        return false;   
+                    }
+                    return true;     
+                  }
+                   
+            break;
+            case 'k':// GYOKU
+                if(max(abs(diff.X), abs(diff.Y)) == 1 ) 
+                return true;
+            break;
+        }
+        return false;
+    } 
+}
+
+
+bool kinMove(struct Location loc, bool owner){
+     if(owner == SENTE){
+            if(max(abs(loc.X), abs(loc.Y)) == 1  && !(loc.Y == -1 && abs(loc.X) == 1 )) 
+            return true;
+            }
+    else if(max(abs(loc.X), abs(loc.Y)) == 1  && !(loc.Y == 1 && abs(loc.X) == 1 )) 
+        return true;
+    
+    
+    return false;
+
+}
+

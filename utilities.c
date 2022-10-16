@@ -50,3 +50,7 @@ char ctoi(char c){
     if(isdigit(c)) return c - '0';
     else return '!';
 }
+
+char max(char a ,char b){
+    return a > b ? a : b;
+}
