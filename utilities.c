@@ -1,9 +1,8 @@
-#include<stdio.h>
-#include<regex.h>
-#include<stdlib.h>
-#include"utilities.h"
-#include<ctype.h>
-
+#include <stdio.h>
+#include <regex.h>
+#include <stdlib.h>
+#include "utilities.h"
+#include <ctype.h>
 
 char Regex(char *textToCheck, const char *regexStr)
 {
@@ -43,14 +42,19 @@ char Regex(char *textToCheck, const char *regexStr)
     regfree(&compiledRegex);
     return actualReturnValue;
 }
-void printColor(int colorCode, char* text){
-        printf("%c[%dm%s%c[0m", 0x1B, colorCode,text,0x1B);
-    }
-char ctoi(char c){
-    if(isdigit(c)) return c - '0';
-    else return '!';
+void printColor(int colorCode, char *text)
+{
+    printf("%c[%dm%s%c[0m", 0x1B, colorCode, text, 0x1B);
+}
+char ctoi(char c)
+{
+    if (isdigit(c))
+        return c - '0';
+    else
+        return '!';
 }
 
-char max(char a ,char b){
+char max(char a, char b)
+{
     return a > b ? a : b;
 }

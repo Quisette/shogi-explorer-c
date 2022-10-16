@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include"utilities.h"
+#include "utilities.h"
 #include <math.h>
 #include <stdbool.h>
 
 #ifndef SHOGI_LIB
 #define SHOGI_LIB
-#define SFEN_REGEX  "[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9} [wb] [-plnsgkrbPLNSGKRB1-9]+ [1-9]+"
+#define SFEN_REGEX "[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9} [wb] [-plnsgkrbPLNSGKRB1-9]+ [1-9]+"
 #define INPUT_REGEX "[1-9]{1,2}\\s[1-9]{1,2}"
-#define INPUT_REGEX_FULL "[1-9]{1,2}\\s[1-9]{1,2}\\s[a-z]{2,5}"
+#define INPUT_REGEX_FULL "[1-9]{1,2}\\s[1-9]{1,2}\\s[a-z]{2,7}"
 
 // type of pieces
 
@@ -32,10 +32,11 @@ enum PieceOwner
 };
 struct PieceAttr
 {
-    char sfen[2];
-    char*  displayChar[2];
+    char sfen;
+    char *displayChar[2];
     char **moveList;
     char **promotedMoveList;
+    char* name[2];
 };
 struct PieceOnBoard
 {
@@ -66,18 +67,20 @@ struct Board
 };
 struct SfenData
 {
-    
+
     char *matrix[9];
     char turn; // turn
     char *mochiKomaList;
     int moveNumber;
 };
-struct Location{
+struct Location
+{
     int X;
     int Y;
 };
-struct UserInput{
-    char* type;
+struct UserInput
+{
+    char *type;
     struct Location init;
     struct Location final;
 };
@@ -98,14 +101,16 @@ void userInput();
 void returnToOrigin();
 bool SFENParse(char *sfen);
 void SFENLoad(struct SfenData data);
-int getPieceNumber(char c );
+int getPieceNumber(char c);
 char coordTransfer(char axis, char input);
 // struct Location coordTransfer(struct Location loc);
 struct PieceOnBoard *getPieceBycoord(struct Location loc);
-char* getPieceName(struct PieceOnBoard piece);
+char *getPieceName(struct PieceOnBoard piece);
 void makeMove(struct Location init, struct Location final, bool promote);
 char owner(char pieceType);
 struct Location *moveDiff(struct Location init, struct Location final);
 bool kinMove(struct Location loc, bool owner);
-bool validMove(struct Location init, struct Location final, struct PieceOnBoard piece);
+bool validMove(struct Location init, struct Location final);
+bool gyokuMove(struct Location loc);
+int getPieceByName(char* str);
 #endif // SHOGI_LIB
