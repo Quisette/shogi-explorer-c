@@ -284,12 +284,20 @@ bool validMove(struct Location init, struct Location final, struct PieceOnBoard 
     struct Location diff;
     struct Location testPos;
     //prevent accessing empty spaces
-    if(piece.type == ' ') 
+    if(piece.type == ' '){
+        printf("You have accessed an empty space.\n");
         return false;
+    } 
     // prevent taking owned pieces
-    if(owner(getPieceBycoord(final)->type) == owner(getPieceBycoord(init)->type))
+    if(owner(getPieceBycoord(final)->type) == owner(getPieceBycoord(init)->type)){
+        printf("You're taking your own pieces.\n");
         return false;
-    
+    }
+    // prevent accessing opponent's pieces
+    if(owner(getPieceBycoord(init)->type) != bannmenn.turn) {
+        printf("Do not move your opponent's pieces.\n");
+        return false;
+    }
     else {
         diff.X =  final.X - init.X; 
         diff.Y = final.Y - init.Y;
@@ -341,8 +349,11 @@ bool validMove(struct Location init, struct Location final, struct PieceOnBoard 
                     for(int i = 1; i < abs(diff.X); i++){
                         testPos.X += abs(diff.X)/diff.X;
                         testPos.Y += abs(diff.Y)/diff.Y;
-                        if(getPieceBycoord(testPos)->type != ' ') 
+                        if(getPieceBycoord(testPos)->type != ' '){
+                            printf("You're moving across pieces.\n");
                             return false;   
+
+                        } 
                     }
                     return true;
                 }
@@ -356,8 +367,10 @@ bool validMove(struct Location init, struct Location final, struct PieceOnBoard 
                             testPos.X += abs(diff.X)/diff.X;
                         if(diff.Y != 0)
                             testPos.Y += abs(diff.Y)/diff.Y;
-                        if(getPieceBycoord(testPos)->type != ' ') 
-                        return false;   
+                        if(getPieceBycoord(testPos)->type != ' '){
+                            printf("You're moving across pieces.\n");
+                            return false;   
+                        } 
                     }
                     return true;     
                   }
