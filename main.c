@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     char nextSfen[150] = "ln3g1nl/3sg1k2/p2psp1p1/4p1p1p/1p1P5/4PP2P/PP+rS2PP1/4G1SK1/L4G1NL b RB2Pbn 45 ";
     initialize();
 
-    if (!SFENParse(initSfen))
+    if (!SFENParse(nextSfen))
         renderBoard();
     while (true)
     {
@@ -23,6 +23,8 @@ int main(int argc, char **argv)
         {
             makeMove(input.init, input.final, 0);
             renderBoard();
+            printf("%s",exportToSFEN()); 
+            
         }
         else
             printf("Invalid move.\n");

@@ -50,12 +50,59 @@ void initialize()
     
 }
 // reads KIF file into the program.
-void readKIF(FILE *file)
+void readKifu(FILE *file)
 {
 }
 // shows the current sfen (map of current bannmenn)
-char *exportToSFEN(struct Board board)
-{
+char *exportToSFEN()
+{   
+    // TODO complete space to word detection
+    char str[150]  = "";
+    char numstr[4] = "";
+    int blanks;
+    //bannmenn recording. Note that spaces are not processed. 
+    for ( int i = 0 ; i  < 9; i++ ){
+        for (int j = 0; j < 9; j++ ){
+            if(bannmenn.pieces[i][j].promoted)
+                append_str(str, '+');
+            // if(bannmenn.pieces[i][j].type == ' '){
+            //     blanks++;
+            //     break;
+            // }
+            // append_str(str, blanks + '0');
+            append_str(str, bannmenn.pieces[i][j].type);
+        }
+        if(i != 8)
+                append_str(str, '/');
+    }
+    // teban recording 
+    append_str(str, ' '); 
+    append_str(str, bannmenn.turn? 'w':'b');
+    //mochikoma recording
+    bool mochikomaEmpty = true;
+    append_str(str, ' '); 
+    for(int i = GYOKU; i >=  FU; i-- ){
+        if(bannmenn.senteKomadai.komaList[i] != 0){
+            if( bannmenn.senteKomadai.komaList[i] > 1) 
+                append_str(str, bannmenn.senteKomadai.komaList[i] + '0');
+            append_str(str,toupper( pieceAttr[i].sfen));
+            mochikomaEmpty = false;
+        }
+    }
+    for(int i = GYOKU; i >=  FU; i-- ){
+        if(bannmenn.goteKomadai.komaList[i] != 0){
+            if( bannmenn.goteKomadai.komaList[i] > 1) 
+                    append_str(str, bannmenn.goteKomadai.komaList[i] + '0');
+            append_str(str, tolower( pieceAttr[i].sfen));
+            mochikomaEmpty = false;
+        }
+    }
+    if(mochikomaEmpty) append_str(str, '-');
+    sprintf(numstr, " %d", bannmenn.moveNumber);
+    strcat(str, numstr);
+
+    puts(str);
+    return "test";
 }
 bool SFENParse(char *sfen)
 {
@@ -295,6 +342,10 @@ char *getPieceName(struct PieceOnBoard piece)
 }
 void makeMove(struct Location init, struct Location final, bool promote)
 {
+    if(init.X == 0 && init.Y == 0){
+        getPieceBycoord(final)->promoted = 0;
+        getPieceBycoord(final)->type =pieceAttr[getPieceNumByName(input.type)].sfen;
+    }
     if(getPieceBycoord(final)->type  != ' '){
         if (owner(getPieceBycoord(final)->type) == SENTE)
     {
@@ -328,15 +379,18 @@ bool validMove(struct Location init, struct Location final)
     struct Location diff;
     struct Location testPos;
     struct PieceOnBoard *piece = getPieceBycoord(init);
+    //TODO mochikoma utsu detection 
+
     // checks if entered piece name is correct
-    if( strcmp(input.type,pieceAttr[getPieceNumber(piece->type)].name[piece->promoted])  != 0){
-        printf("your piece name is not valid.\n");
-        return false;
-    }
+    
     // prevent accessing empty spaces
     if (piece->type == ' ')
     {
         printf("You have accessed an empty space.\n");
+        return false;
+    }
+    if( strcmp(input.type,pieceAttr[getPieceNumber(piece->type)].name[piece->promoted])  != 0 ){
+        printf("your piece name is not valid.\n");
         return false;
     }
     // prevent taking owned pieces

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "utilities.h"
 #include <ctype.h>
+#include <string.h>
 
 char Regex(char *textToCheck, const char *regexStr)
 {
@@ -58,3 +59,10 @@ char max(char a, char b)
 {
     return a > b ? a : b;
 }
+
+
+void append_str(char str[] , char c){
+     auto char arr[2] = {c , '\0'};
+     strcat(str , arr);
+}
+

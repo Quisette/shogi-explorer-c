@@ -7,8 +7,8 @@
 #ifndef SHOGI_LIB
 #define SHOGI_LIB
 #define SFEN_REGEX "[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9} [wb] [-plnsgkrbPLNSGKRB1-9]+ [1-9]+"
-#define INPUT_REGEX "[1-9]{1,2}\\s[1-9]{1,2}"
-#define INPUT_REGEX_FULL "[1-9]{1,2}\\s[1-9]{1,2}\\s[a-z]{2,7}"
+#define INPUT_REGEX "[0-9]{1,2}\\s[0-9]{1,2}"
+#define INPUT_REGEX_FULL "[0-9]{1,2}\\s[0-9]{1,2}\\s[a-z]{2,7}"
 
 // type of pieces
 
@@ -88,9 +88,9 @@ struct UserInput
 // initialize the project;
 void initialize();
 // reads KIF file into the program.
-void readKIF(FILE *file);
+void readKifu(FILE *file);
 // shows the current sfen (map of current bannmenn)
-char *exportToSFEN(struct Board board);
+char *exportToSFEN();
 // shows the board based on current database+
 void renderBoard();
 // let the user browse through shogi moves
