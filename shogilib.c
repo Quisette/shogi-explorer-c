@@ -56,24 +56,35 @@ void readKifu(FILE *file)
 // shows the current sfen (map of current bannmenn)
 char *exportToSFEN()
 {   
-    // TODO complete space to word detection
     char str[150]  = "";
     char numstr[4] = "";
-    int blanks;
+    int blanks = 0;
+    int i, j; 
     //bannmenn recording. Note that spaces are not processed. 
-    for ( int i = 0 ; i  < 9; i++ ){
-        for (int j = 0; j < 9; j++ ){
-            if(bannmenn.pieces[i][j].promoted)
+    for (  i = 0 ; i < 9; i++ ){
+        blanks = 0;
+        for ( j = 0; j < 9; j++ ){
+            if(bannmenn.pieces[i][j].type == ' '){
+                blanks++;
+                // printf("%d",blanks);
+                continue;
+            }
+            if(bannmenn.pieces[i][j].promoted){
                 append_str(str, '+');
-            // if(bannmenn.pieces[i][j].type == ' '){
-            //     blanks++;
-            //     break;
-            // }
-            // append_str(str, blanks + '0');
+                continue;
+            }
+            if(blanks != 0 ){
+                append_str(str, blanks + '0');
+                blanks = 0;
+            }
             append_str(str, bannmenn.pieces[i][j].type);
         }
-        if(i != 8)
-                append_str(str, '/');
+        if(i != 8  && j == 9 ){
+            if(blanks != 0)
+                append_str(str,blanks + '0');
+            append_str(str, '/');
+
+            }
     }
     // teban recording 
     append_str(str, ' '); 
