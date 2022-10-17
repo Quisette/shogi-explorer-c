@@ -7,6 +7,7 @@
 struct PieceAttr pieceAttr[14];
 struct Board bannmenn;
 struct UserInput input;
+char *token;
 // initialize the project;
 void initialize()
 {
@@ -308,22 +309,17 @@ void scrollKifu()
 void userInput()
 {
     char rawInput[20];
-    char *token;
+    // char ix, iy, fx, fy;
+    char test[8];
     printf(">>");
-    fgets(rawInput, 20, stdin);
+       fgets(rawInput, 20, stdin);
     while (Regex(rawInput, INPUT_REGEX_FULL) == 1)
     {
         puts("Format Error. \nPlease enter the correct format.");
         fgets(rawInput, 20, stdin);
     }
-    token = strtok(rawInput, " ");
-    input.init.X = ctoi(*token);
-    input.init.Y = ctoi(*(token + 1));
-    token = strtok(NULL, " ");
-    input.final.X = ctoi(*token);
-    input.final.Y = ctoi(*(token + 1));
-    token = strtok(NULL, " ");
-    input.type = strtok(token, "\n");
+    sscanf(rawInput, "%1d%1d %1d%1d %s", &input.init.X, &input.init.Y, &input.final.X,&input.final.Y, input.type);
+   
 
     // printf("%d%d, %d%d , %s", input.init.X, input.init.Y,  input.final.X, input.final.Y,input.type);
 }
@@ -359,13 +355,13 @@ void makeMove(struct Location init, struct Location final, bool promote)
     }
     if(getPieceBycoord(final)->type  != ' '){
         if (owner(getPieceBycoord(final)->type) == SENTE)
-    {
+    
         bannmenn.goteKomadai.komaList[getPieceNumber(getPieceBycoord(final)->type)]++;
-    }
+    
     else
-    {
+    
         bannmenn.senteKomadai.komaList[getPieceNumber(getPieceBycoord(final)->type)]++;
-    }
+    
 
     }
     
@@ -388,11 +384,9 @@ char owner(char pieceType)
 bool validMove(struct Location init, struct Location final)
 {
     struct Location diff;
-    struct Location testPos;
     struct PieceOnBoard *piece = getPieceBycoord(init);
     //TODO mochikoma utsu detection 
-
-    // checks if entered piece name is correct
+    
     
     // prevent accessing empty spaces
     if (piece->type == ' ')
@@ -400,10 +394,12 @@ bool validMove(struct Location init, struct Location final)
         printf("You have accessed an empty space.\n");
         return false;
     }
+    // checks if entered piece name is correct
     if( strcmp(input.type,pieceAttr[getPieceNumber(piece->type)].name[piece->promoted])  != 0 ){
         printf("your piece name is not valid.\n");
         return false;
     }
+    
     // prevent taking owned pieces
     if (owner(getPieceBycoord(final)->type) == owner(getPieceBycoord(init)->type))
     {
@@ -419,20 +415,30 @@ bool validMove(struct Location init, struct Location final)
     // mochikoma detection
     
     else{
+        //calculating position differences 
         diff.X = final.X - init.X;
         diff.Y = final.Y - init.Y;
         switch (tolower(piece->type))
         {
         case 'p': // FU
-            if (owner(piece->type) == SENTE)
+            if(piece->promoted)
+                return kinDetection(piece->type, diff);
+            else{
+                if (owner(piece->type) == SENTE)
             {
                 if (diff.Y == -1 && diff.X == 0)
                     return true;
             }
             else if (diff.Y == 1 && diff.X == 0)
                 return true;
+            
+            }
             break;
+            
         case 'l': // KYO
+            if(piece->promoted)
+                return kinDetection(piece->type, diff);
+            else{
             if (owner(piece->type) == SENTE)
             {
                 if (diff.Y < 0 && diff.X == 0)
@@ -440,8 +446,12 @@ bool validMove(struct Location init, struct Location final)
             }
             else if (diff.Y > 0 && diff.X == 0)
                 return true;
+            }
             break;
         case 'n': // KEI
+            if(piece->promoted)
+                return kinDetection(piece->type, diff);
+            else{
             if (owner(piece->type) == SENTE)
             {
                 if (diff.Y == -2 && abs(diff.X) == 1)
@@ -450,27 +460,81 @@ bool validMove(struct Location init, struct Location final)
             else if (diff.Y == 2 && abs(diff.X) == 1)
                 return true;
 
+            }
             break;
         case 's': // GIN
+            if(piece->promoted)
+                return kinDetection(piece->type, diff);
+            else{
             if (owner(piece->type) == SENTE)
-            {
                 if (abs(diff.Y) == 1 && abs(diff.X) == 1 || (diff.Y == -1 && diff.X == 0))
                     return true;
-            }
             else if (abs(diff.Y) == 1 && abs(diff.X) == 1 || (diff.Y == 1 && diff.X == 0))
                 return true;
-
+            }
             break;
         case 'g': // KIN
-            if (owner(piece->type) == SENTE)
-            {
-                return kinMove(diff, SENTE);
-            }
-            else
-                return kinMove(diff, GOTE);
+            return kinDetection(piece->type, diff);
             break;
         case 'b': // KAKU
-            if (diff.X == diff.Y)
+            if(piece->promoted)
+                return (kakuMove(diff,init) || gyokuMove(diff));
+            else{
+            return kakuMove(diff, init);
+            }
+            break;
+        case 'r': // HI
+            if(piece -> promoted)
+                return (kakuMove(diff,init) || gyokuMove(diff));
+            else
+                return hisyaMove(diff,init);
+            break;
+        case 'k': // GYOKU
+            return gyokuMove(diff);
+            break;
+        }
+        return false;
+    }
+}
+
+bool kinMove(struct Location loc, bool owner)
+{
+    if (owner == SENTE)
+        if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == -1 && abs(loc.X) == 1))
+            return true;
+    else if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == 1 && abs(loc.X) == 1))
+        return true;
+
+    return false;
+}
+
+bool gyokuMove(struct Location loc){
+    return (max(abs(loc.X), abs(loc.Y)) == 1);
+}
+int getPieceNumByName(char* str)
+{
+    
+    for( int i = FU; i <= GYOKU; i++){
+        for(int j = 0; j <= 1 ; j++)
+            if(pieceAttr[i].name[j] == str)
+                return i;
+    }
+    return -1;
+    
+}
+
+bool kinDetection(char type, struct Location diff)
+{
+    if (owner(type) == SENTE)
+                return kinMove(diff, SENTE);
+            else
+                return kinMove(diff, GOTE);
+}
+
+bool kakuMove(struct Location diff, struct Location init){
+    struct Location testPos;
+
+    if (diff.X == diff.Y)
             {
                 testPos.X = init.X;
                 testPos.Y = init.Y;
@@ -486,9 +550,10 @@ bool validMove(struct Location init, struct Location final)
                 }
                 return true;
             }
-            break;
-        case 'r': // HI
-            if (diff.X * diff.Y == 0)
+}
+bool hisyaMove(struct Location diff, struct Location init){
+    struct Location testPos;
+    if (diff.X * diff.Y == 0)
             {
                 testPos.X = init.X;
                 testPos.Y = init.Y;
@@ -507,38 +572,4 @@ bool validMove(struct Location init, struct Location final)
                 return true;
             }
 
-            break;
-        case 'k': // GYOKU
-            return gyokuMove(diff);
-            break;
-        }
-        return false;
-    }
-}
-
-bool kinMove(struct Location loc, bool owner)
-{
-    if (owner == SENTE)
-    {
-        if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == -1 && abs(loc.X) == 1))
-            return true;
-    }
-    else if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == 1 && abs(loc.X) == 1))
-        return true;
-
-    return false;
-}
-bool gyokuMove(struct Location loc){
-    return (max(abs(loc.X), abs(loc.Y)) == 1);
-}
-int getPieceNumByName(char* str)
-{
-    
-    for( int i = FU; i <= GYOKU; i++){
-        for(int j = 0; j <= 1 ; j++)
-            if(pieceAttr[i].name[j] == str)
-                return i;
-    }
-    return -1;
-    
 }

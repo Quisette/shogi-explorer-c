@@ -7,8 +7,8 @@
 #ifndef SHOGI_LIB
 #define SHOGI_LIB
 #define SFEN_REGEX "[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9} [wb] [-plnsgkrbPLNSGKRB1-9]+ [1-9]+"
-#define INPUT_REGEX "[0-9]{1,2}\\s[0-9]{1,2}"
-#define INPUT_REGEX_FULL "[0-9]{1,2}\\s[0-9]{1,2}\\s[a-z]{2,7}"
+#define INPUT_REGEX "[0-9]{1,2}\\s[1-9]{1,2}"
+#define INPUT_REGEX_FULL "[0-9]{1,2}\\s[1-9]{1,2}\\s[a-z]{2,7}"
 
 // type of pieces
 
@@ -80,7 +80,7 @@ struct Location
 };
 struct UserInput
 {
-    char *type;
+    char type[10];
     struct Location init;
     struct Location final;
 };
@@ -113,4 +113,7 @@ bool kinMove(struct Location loc, bool owner);
 bool validMove(struct Location init, struct Location final);
 bool gyokuMove(struct Location loc);
 int getPieceNumByName(char* str);
+bool kinDetection(char type, struct Location diff);
+bool kakuMove(struct Location diff, struct Location init);
+bool hisyaMove(struct Location diff, struct Location init);
 #endif // SHOGI_LIB
