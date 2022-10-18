@@ -4,9 +4,11 @@
 #include "shogilib.h"
 #include <string.h>
 #include <ctype.h>
-struct PieceAttr pieceAttr[14];
-struct Board bannmenn;
-struct UserInput input;
+Attr_t pieceAttr[14];
+Board_t bannmenn;
+UserInput_t input;
+
+
 char *token;
 // initialize the project;
 void initialize()
@@ -55,9 +57,9 @@ void readKifu(FILE *file)
 {
 }
 // shows the current sfen (map of current bannmenn)
-char *exportToSFEN()
-{   
-    char str[150]  = "";
+void exportToSFEN(char* str)
+{   //TODO Promoted pieces are not correctly shown 
+    // char str[150]  = "";
     char numstr[4] = "";
     int blanks = 0;
     int i, j; 
@@ -113,12 +115,12 @@ char *exportToSFEN()
     sprintf(numstr, " %d", bannmenn.moveNumber);
     strcat(str, numstr);
 
-    puts(str);
-    return "test";
+    // puts(str);
+    // return str;
 }
 bool SFENParse(char *sfen)
 {
-    struct SfenData sfenData;
+    SfenData_t sfenData;
     const char delim[2] = " ";
     char *token;
     char *rawSfenBoard;
@@ -146,7 +148,7 @@ bool SFENParse(char *sfen)
     return 0;
 }
 // shows the board based on current database
-void SFENLoad(struct SfenData data)
+void SFENLoad(SfenData_t data)
 {
     /* turn and move number parsing */
     (data.turn == 'w') ? bannmenn.turn = SENTE : GOTE;
@@ -338,16 +340,16 @@ char coordTransfer(char axis, char input)
         return input - 1;
 }
 
-struct PieceOnBoard *getPieceBycoord(struct Location loc)
+Piece_t *getPieceBycoord(Location_t loc)
 {
     return &bannmenn.pieces[coordTransfer('Y', loc.Y)][coordTransfer('X', loc.X)];
 }
 
-char *getPieceName(struct PieceOnBoard piece)
+char *getPieceName(Piece_t piece)
 {
     return pieceAttr[getPieceNumber(piece.type)].displayChar[piece.promoted];
 }
-void makeMove(struct Location init, struct Location final, bool promote)
+void makeMove(Location_t init, Location_t final, bool promote)
 {
     if(init.X == 0 && init.Y == 0){
         getPieceBycoord(final)->promoted = 0;
@@ -381,10 +383,10 @@ char owner(char pieceType)
     else
         return GOTE;
 }
-bool validMove(struct Location init, struct Location final)
+bool validMove(Location_t init, Location_t final)
 {
-    struct Location diff;
-    struct PieceOnBoard *piece = getPieceBycoord(init);
+    Location_t diff;
+    Piece_t *piece = getPieceBycoord(init);
     //TODO mochikoma utsu detection 
     
     
@@ -462,13 +464,14 @@ bool validMove(struct Location init, struct Location final)
 
             }
             break;
-        case 's': // GIN
+        case 's': // GIN 
             if(piece->promoted)
                 return kinDetection(piece->type, diff);
             else{
-            if (owner(piece->type) == SENTE)
+            if (owner(piece->type) == SENTE){
                 if (abs(diff.Y) == 1 && abs(diff.X) == 1 || (diff.Y == -1 && diff.X == 0))
                     return true;
+                    }
             else if (abs(diff.Y) == 1 && abs(diff.X) == 1 || (diff.Y == 1 && diff.X == 0))
                 return true;
             }
@@ -497,7 +500,7 @@ bool validMove(struct Location init, struct Location final)
     }
 }
 
-bool kinMove(struct Location loc, bool owner)
+bool kinMove(Location_t loc, bool owner)
 {
     if (owner == SENTE)
         if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == -1 && abs(loc.X) == 1))
@@ -508,7 +511,7 @@ bool kinMove(struct Location loc, bool owner)
     return false;
 }
 
-bool gyokuMove(struct Location loc){
+bool gyokuMove(Location_t loc){
     return (max(abs(loc.X), abs(loc.Y)) == 1);
 }
 int getPieceNumByName(char* str)
@@ -523,7 +526,7 @@ int getPieceNumByName(char* str)
     
 }
 
-bool kinDetection(char type, struct Location diff)
+bool kinDetection(char type, Location_t diff)
 {
     if (owner(type) == SENTE)
                 return kinMove(diff, SENTE);
@@ -531,8 +534,8 @@ bool kinDetection(char type, struct Location diff)
                 return kinMove(diff, GOTE);
 }
 
-bool kakuMove(struct Location diff, struct Location init){
-    struct Location testPos;
+bool kakuMove(Location_t diff, Location_t init){
+    Location_t testPos;
 
     if (diff.X == diff.Y)
             {
@@ -551,8 +554,8 @@ bool kakuMove(struct Location diff, struct Location init){
                 return true;
             }
 }
-bool hisyaMove(struct Location diff, struct Location init){
-    struct Location testPos;
+bool hisyaMove(Location_t diff, Location_t init){
+    Location_t testPos;
     if (diff.X * diff.Y == 0)
             {
                 testPos.X = init.X;

@@ -57,5 +57,6 @@
         "cinttypes": "c",
         "cstdbool": "c",
         "typeinfo": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }
