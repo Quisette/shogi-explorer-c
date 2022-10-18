@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "stacklib.h"
 #include "shogilib.h"
 #include <string.h>
 #include <ctype.h>
 Attr_t pieceAttr[14];
 Board_t bannmenn;
 UserInput_t input;
-
 
 char *token;
 // initialize the project;
@@ -40,78 +40,87 @@ void initialize()
     pieceAttr[KEI].name[0] = "kei";
     pieceAttr[GIN].name[0] = "gin";
     pieceAttr[KIN].name[0] = "kin";
-    pieceAttr[KAKU].name[0] ="kaku";
+    pieceAttr[KAKU].name[0] = "kaku";
     pieceAttr[HI].name[0] = "hi";
     pieceAttr[GYOKU].name[0] = "gyoku";
     pieceAttr[FU].name[1] = "to";
     pieceAttr[KYO].name[1] = "narikyo";
     pieceAttr[KEI].name[1] = "narikei";
     pieceAttr[GIN].name[1] = "gin";
-    pieceAttr[KAKU].name[1] ="uma";
+    pieceAttr[KAKU].name[1] = "uma";
     pieceAttr[HI].name[1] = "ryu";
-
-    
 }
 // reads KIF file into the program.
 void readKifu(FILE *file)
 {
 }
 // shows the current sfen (map of current bannmenn)
-void exportToSFEN(char* str)
-{   //TODO Promoted pieces are not correctly shown 
+void exportToSFEN(char *str)
+{ 
     // char str[150]  = "";
     char numstr[4] = "";
     int blanks = 0;
-    int i, j; 
-    //bannmenn recording. Note that spaces are not processed. 
-    for (  i = 0 ; i < 9; i++ ){
+    int i, j;
+    // bannmenn recording. Note that spaces are not processed.
+    for (i = 0; i < 9; i++)
+    {
         blanks = 0;
-        for ( j = 0; j < 9; j++ ){
-            if(bannmenn.pieces[i][j].type == ' '){
+        for (j = 0; j < 9; j++)
+        {
+            if (bannmenn.pieces[i][j].type == ' ')
+            {
                 blanks++;
                 // printf("%d",blanks);
                 continue;
             }
-            if(bannmenn.pieces[i][j].promoted){
-                append_str(str, '+');
-                continue;
-            }
-            if(blanks != 0 ){
+            if (blanks != 0)
+            {
                 append_str(str, blanks + '0');
                 blanks = 0;
             }
+            if (bannmenn.pieces[i][j].promoted)
+            {
+                append_str(str, '+');
+                // continue;
+            }
+            
             append_str(str, bannmenn.pieces[i][j].type);
         }
-        if(i != 8  && j == 9 ){
-            if(blanks != 0)
-                append_str(str,blanks + '0');
+        if (i != 8 && j == 9)
+        {
+            if (blanks != 0)
+                append_str(str, blanks + '0');
             append_str(str, '/');
-
-            }
+        }
     }
-    // teban recording 
-    append_str(str, ' '); 
-    append_str(str, bannmenn.turn? 'w':'b');
-    //mochikoma recording
+    // teban recording
+    append_str(str, ' ');
+    append_str(str, bannmenn.turn ? 'w' : 'b');
+    // mochikoma recording
     bool mochikomaEmpty = true;
-    append_str(str, ' '); 
-    for(int i = GYOKU; i >=  FU; i-- ){
-        if(bannmenn.senteKomadai.komaList[i] != 0){
-            if( bannmenn.senteKomadai.komaList[i] > 1) 
+    append_str(str, ' ');
+    for (int i = GYOKU; i >= FU; i--)
+    {
+        if (bannmenn.senteKomadai.komaList[i] != 0)
+        {
+            if (bannmenn.senteKomadai.komaList[i] > 1)
                 append_str(str, bannmenn.senteKomadai.komaList[i] + '0');
-            append_str(str,toupper( pieceAttr[i].sfen));
+            append_str(str, toupper(pieceAttr[i].sfen));
             mochikomaEmpty = false;
         }
     }
-    for(int i = GYOKU; i >=  FU; i-- ){
-        if(bannmenn.goteKomadai.komaList[i] != 0){
-            if( bannmenn.goteKomadai.komaList[i] > 1) 
-                    append_str(str, bannmenn.goteKomadai.komaList[i] + '0');
-            append_str(str, tolower( pieceAttr[i].sfen));
+    for (int i = GYOKU; i >= FU; i--)
+    {
+        if (bannmenn.goteKomadai.komaList[i] != 0)
+        {
+            if (bannmenn.goteKomadai.komaList[i] > 1)
+                append_str(str, bannmenn.goteKomadai.komaList[i] + '0');
+            append_str(str, tolower(pieceAttr[i].sfen));
             mochikomaEmpty = false;
         }
     }
-    if(mochikomaEmpty) append_str(str, '-');
+    if (mochikomaEmpty)
+        append_str(str, '-');
     sprintf(numstr, " %d", bannmenn.moveNumber);
     strcat(str, numstr);
 
@@ -235,16 +244,17 @@ void SFENLoad(SfenData_t data)
 }
 int getPieceNumber(char c)
 {
-    if(!isalpha(c)) printf("!!!");
+    if (!isalpha(c))
+        printf("!!!");
     c = tolower(c);
     // printf("%c",c);
-    for( int i = FU; i <= GYOKU; i++){
-        if(pieceAttr[i].sfen == c)
-        return i;
+    for (int i = FU; i <= GYOKU; i++)
+    {
+        if (pieceAttr[i].sfen == c)
+            return i;
         // printf("OK");
     }
     return -1;
-    
 }
 void renderBoard()
 {
@@ -308,20 +318,25 @@ void scrollKifu()
 {
 }
 // let user enter the move to interact with the shogi board
-void userInput()
+int userInput()
 {
     char rawInput[20];
-    // char ix, iy, fx, fy;
-    char test[8];
+
     printf(">>");
-       fgets(rawInput, 20, stdin);
+    fgets(rawInput, 20, stdin);
+
     while (Regex(rawInput, INPUT_REGEX_FULL) == 1)
     {
-        puts("Format Error. \nPlease enter the correct format.");
-        fgets(rawInput, 20, stdin);
+        if (strcmp(rawInput, "quit\n") == 0)
+            return -1;
+        else
+        {
+            puts("Format Error. \nPlease enter the correct format.");
+            fgets(rawInput, 20, stdin);
+        }
     }
-    sscanf(rawInput, "%1d%1d %1d%1d %s", &input.init.X, &input.init.Y, &input.final.X,&input.final.Y, input.type);
-   
+    sscanf(rawInput, "%1d%1d %1d%1d %s", &input.init.X, &input.init.Y, &input.final.X, &input.final.Y, input.type);
+    return 0;
 
     // printf("%d%d, %d%d , %s", input.init.X, input.init.Y,  input.final.X, input.final.Y,input.type);
 }
@@ -351,22 +366,22 @@ char *getPieceName(Piece_t piece)
 }
 void makeMove(Location_t init, Location_t final, bool promote)
 {
-    if(init.X == 0 && init.Y == 0){
+    if (init.X == 0 && init.Y == 0)
+    {
         getPieceBycoord(final)->promoted = 0;
-        getPieceBycoord(final)->type =pieceAttr[getPieceNumByName(input.type)].sfen;
+        getPieceBycoord(final)->type = pieceAttr[getPieceNumByName(input.type)].sfen;
     }
-    if(getPieceBycoord(final)->type  != ' '){
+    if (getPieceBycoord(final)->type != ' ')
+    {
         if (owner(getPieceBycoord(final)->type) == SENTE)
-    
-        bannmenn.goteKomadai.komaList[getPieceNumber(getPieceBycoord(final)->type)]++;
-    
-    else
-    
-        bannmenn.senteKomadai.komaList[getPieceNumber(getPieceBycoord(final)->type)]++;
-    
 
+            bannmenn.goteKomadai.komaList[getPieceNumber(getPieceBycoord(final)->type)]++;
+
+        else
+
+            bannmenn.senteKomadai.komaList[getPieceNumber(getPieceBycoord(final)->type)]++;
     }
-    
+
     getPieceBycoord(final)->promoted = promote;
     getPieceBycoord(final)->type = getPieceBycoord(init)->type;
     getPieceBycoord(init)->type = ' ';
@@ -387,9 +402,8 @@ bool validMove(Location_t init, Location_t final)
 {
     Location_t diff;
     Piece_t *piece = getPieceBycoord(init);
-    //TODO mochikoma utsu detection 
-    
-    
+    // TODO mochikoma utsu detection
+
     // prevent accessing empty spaces
     if (piece->type == ' ')
     {
@@ -397,11 +411,12 @@ bool validMove(Location_t init, Location_t final)
         return false;
     }
     // checks if entered piece name is correct
-    if( strcmp(input.type,pieceAttr[getPieceNumber(piece->type)].name[piece->promoted])  != 0 ){
+    if (strcmp(input.type, pieceAttr[getPieceNumber(piece->type)].name[piece->promoted]) != 0)
+    {
         printf("your piece name is not valid.\n");
         return false;
     }
-    
+
     // prevent taking owned pieces
     if (owner(getPieceBycoord(final)->type) == owner(getPieceBycoord(init)->type))
     {
@@ -415,82 +430,87 @@ bool validMove(Location_t init, Location_t final)
         return false;
     }
     // mochikoma detection
-    
-    else{
-        //calculating position differences 
+
+    else
+    {
+        // calculating position differences
         diff.X = final.X - init.X;
         diff.Y = final.Y - init.Y;
         switch (tolower(piece->type))
         {
         case 'p': // FU
-            if(piece->promoted)
+            if (piece->promoted)
                 return kinDetection(piece->type, diff);
-            else{
-                if (owner(piece->type) == SENTE)
+            else
             {
-                if (diff.Y == -1 && diff.X == 0)
+                if (owner(piece->type) == SENTE)
+                {
+                    if (diff.Y == -1 && diff.X == 0)
+                        return true;
+                }
+                else if (diff.Y == 1 && diff.X == 0)
                     return true;
-            }
-            else if (diff.Y == 1 && diff.X == 0)
-                return true;
-            
             }
             break;
-            
+
         case 'l': // KYO
-            if(piece->promoted)
+            if (piece->promoted)
                 return kinDetection(piece->type, diff);
-            else{
-            if (owner(piece->type) == SENTE)
+            else
             {
-                if (diff.Y < 0 && diff.X == 0)
+                if (owner(piece->type) == SENTE)
+                {
+                    if (diff.Y < 0 && diff.X == 0)
+                        return true;
+                }
+                else if (diff.Y > 0 && diff.X == 0)
                     return true;
-            }
-            else if (diff.Y > 0 && diff.X == 0)
-                return true;
             }
             break;
         case 'n': // KEI
-            if(piece->promoted)
+            if (piece->promoted)
                 return kinDetection(piece->type, diff);
-            else{
-            if (owner(piece->type) == SENTE)
+            else
             {
-                if (diff.Y == -2 && abs(diff.X) == 1)
+                if (owner(piece->type) == SENTE)
+                {
+                    if (diff.Y == -2 && abs(diff.X) == 1)
+                        return true;
+                }
+                else if (diff.Y == 2 && abs(diff.X) == 1)
                     return true;
-            }
-            else if (diff.Y == 2 && abs(diff.X) == 1)
-                return true;
-
             }
             break;
-        case 's': // GIN 
-            if(piece->promoted)
+        case 's': // GIN
+            if (piece->promoted)
                 return kinDetection(piece->type, diff);
-            else{
-            if (owner(piece->type) == SENTE){
-                if (abs(diff.Y) == 1 && abs(diff.X) == 1 || (diff.Y == -1 && diff.X == 0))
+            else
+            {
+                if (owner(piece->type) == SENTE)
+                {
+                    if (abs(diff.Y) == 1 && abs(diff.X) == 1 || (diff.Y == -1 && diff.X == 0))
+                        return true;
+                }
+                else if (abs(diff.Y) == 1 && abs(diff.X) == 1 || (diff.Y == 1 && diff.X == 0))
                     return true;
-                    }
-            else if (abs(diff.Y) == 1 && abs(diff.X) == 1 || (diff.Y == 1 && diff.X == 0))
-                return true;
             }
             break;
         case 'g': // KIN
             return kinDetection(piece->type, diff);
             break;
         case 'b': // KAKU
-            if(piece->promoted)
-                return (kakuMove(diff,init) || gyokuMove(diff));
-            else{
-            return kakuMove(diff, init);
+            if (piece->promoted)
+                return (kakuMove(diff, init) || gyokuMove(diff));
+            else
+            {
+                return kakuMove(diff, init);
             }
             break;
         case 'r': // HI
-            if(piece -> promoted)
-                return (kakuMove(diff,init) || gyokuMove(diff));
+            if (piece->promoted)
+                return (kakuMove(diff, init) || gyokuMove(diff));
             else
-                return hisyaMove(diff,init);
+                return hisyaMove(diff, init);
             break;
         case 'k': // GYOKU
             return gyokuMove(diff);
@@ -505,74 +525,91 @@ bool kinMove(Location_t loc, bool owner)
     if (owner == SENTE)
         if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == -1 && abs(loc.X) == 1))
             return true;
-    else if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == 1 && abs(loc.X) == 1))
-        return true;
+        else if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == 1 && abs(loc.X) == 1))
+            return true;
 
     return false;
 }
 
-bool gyokuMove(Location_t loc){
+bool gyokuMove(Location_t loc)
+{
     return (max(abs(loc.X), abs(loc.Y)) == 1);
 }
-int getPieceNumByName(char* str)
+int getPieceNumByName(char *str)
 {
-    
-    for( int i = FU; i <= GYOKU; i++){
-        for(int j = 0; j <= 1 ; j++)
-            if(pieceAttr[i].name[j] == str)
+
+    for (int i = FU; i <= GYOKU; i++)
+    {
+        for (int j = 0; j <= 1; j++)
+            if (pieceAttr[i].name[j] == str)
                 return i;
     }
     return -1;
-    
 }
 
 bool kinDetection(char type, Location_t diff)
 {
     if (owner(type) == SENTE)
-                return kinMove(diff, SENTE);
-            else
-                return kinMove(diff, GOTE);
+        return kinMove(diff, SENTE);
+    else
+        return kinMove(diff, GOTE);
 }
 
-bool kakuMove(Location_t diff, Location_t init){
+bool kakuMove(Location_t diff, Location_t init)
+{
     Location_t testPos;
 
     if (diff.X == diff.Y)
+    {
+        testPos.X = init.X;
+        testPos.Y = init.Y;
+        for (int i = 1; i < abs(diff.X); i++)
+        {
+            testPos.X += abs(diff.X) / diff.X;
+            testPos.Y += abs(diff.Y) / diff.Y;
+            if (getPieceBycoord(testPos)->type != ' ')
             {
-                testPos.X = init.X;
-                testPos.Y = init.Y;
-                for (int i = 1; i < abs(diff.X); i++)
-                {
-                    testPos.X += abs(diff.X) / diff.X;
-                    testPos.Y += abs(diff.Y) / diff.Y;
-                    if (getPieceBycoord(testPos)->type != ' ')
-                    {
-                        printf("You're moving across pieces.\n");
-                        return false;
-                    }
-                }
-                return true;
+                printf("You're moving across pieces.\n");
+                return false;
             }
+        }
+        return true;
+    }
 }
-bool hisyaMove(Location_t diff, Location_t init){
+bool hisyaMove(Location_t diff, Location_t init)
+{
     Location_t testPos;
     if (diff.X * diff.Y == 0)
+    {
+        testPos.X = init.X;
+        testPos.Y = init.Y;
+        for (int i = 1; i < max(abs(diff.X), abs(diff.Y)); i++)
+        {
+            if (diff.X != 0)
+                testPos.X += abs(diff.X) / diff.X;
+            if (diff.Y != 0)
+                testPos.Y += abs(diff.Y) / diff.Y;
+            if (getPieceBycoord(testPos)->type != ' ')
             {
-                testPos.X = init.X;
-                testPos.Y = init.Y;
-                for (int i = 1; i < max(abs(diff.X), abs(diff.Y)); i++)
-                {
-                    if (diff.X != 0)
-                        testPos.X += abs(diff.X) / diff.X;
-                    if (diff.Y != 0)
-                        testPos.Y += abs(diff.Y) / diff.Y;
-                    if (getPieceBycoord(testPos)->type != ' ')
-                    {
-                        printf("You're moving across pieces.\n");
-                        return false;
-                    }
-                }
-                return true;
+                printf("You're moving across pieces.\n");
+                return false;
             }
-
+        }
+        return true;
+    }
+}
+void generateKifu(Stack_t *stack)
+{
+    FILE *fileptr;
+    fileptr = fopen("./kifu.sfencluster", "w");
+    if (fileptr == NULL)
+    {
+        printf("!!!!!\n");
+    }
+    else
+    {
+        while (!isEmpty(stack))
+            fprintf(fileptr, "%s\n", pop(stack));
+    }
+    fclose(fileptr);
 }

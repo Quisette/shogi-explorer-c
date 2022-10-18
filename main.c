@@ -20,26 +20,22 @@ int main(int argc, char **argv)
 
     if (!SFENParse(initSfen))
         renderBoard();
-    while (true)
+    while (userInput() == 0)
     {
-        userInput();
+
         if (validMove(input.init, input.final))
-        {   
+        {
             outputSfen[0] = '\0';
             makeMove(input.init, input.final, 1);
             renderBoard();
             puts("SFEN: ");
             exportToSFEN(outputSfen);
-            push(outputSfen,&kifuStack);
-            printf("%s\n",peek(&kifuStack)); 
-            
+            push(outputSfen, &kifuStack);
+            printf("%s\n", peek(&kifuStack));
         }
         else
             printf("Invalid move.\n");
-        
     }
-    while(!isEmpty(&kifuStack)){
-                printf("%d %s\n", isEmpty(&kifuStack), pop(&kifuStack)); 
-            }
+    generateKifu(&kifuStack);
     return 0;
 }

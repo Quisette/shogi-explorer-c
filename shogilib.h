@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "utilities.h"
+#include "stacklib.h"
 #include <math.h>
 #include <stdbool.h>
 
@@ -103,7 +104,7 @@ void renderBoard();
 // let the user browse through shogi moves
 void scrollKifu();
 // let user enter the move to interact with the shogi board
-void userInput();
+int userInput();
 // back to the origin from user inputs
 void returnToOrigin();
 bool SFENParse(char *sfen);
@@ -123,4 +124,5 @@ int getPieceNumByName(char* str);
 bool kinDetection(char type, Location_t diff);
 bool kakuMove(Location_t diff, Location_t init);
 bool hisyaMove(Location_t diff, Location_t init);
+void generateKifu(Stack_t *stack);
 #endif // SHOGI_LIB
