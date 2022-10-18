@@ -37,6 +37,7 @@ char* pop(Stack_t *stack) {
    }
 }
 
+
 void push(char* data,Stack_t *stack) {
 
    if(!isFull(stack)) {

@@ -47,8 +47,11 @@ void initialize()
     pieceAttr[KYO].name[1] = "narikyo";
     pieceAttr[KEI].name[1] = "narikei";
     pieceAttr[GIN].name[1] = "gin";
+    pieceAttr[KIN].name[1] = "kin";
     pieceAttr[KAKU].name[1] = "uma";
     pieceAttr[HI].name[1] = "ryu";
+    pieceAttr[GYOKU].name[1] = "gyoku";
+
 }
 // reads KIF file into the program.
 void readKifu(FILE *file)
@@ -370,8 +373,10 @@ void makeMove(Location_t init, Location_t final, bool promote)
 {
     if (init.X == 0 && init.Y == 0)
     {
+        // TODO fix the owner issue and combine the mochikoma subtraction in ValidMove to here
         getPieceBycoord(final)->promoted = 0;
         getPieceBycoord(final)->type = pieceAttr[getPieceNumByName(input.type)].sfen;
+        return;
     }
     if (getPieceBycoord(final)->type != ' ')
     {
@@ -403,9 +408,36 @@ char owner(char pieceType)
 bool validMove(Location_t init, Location_t final)
 {
     Location_t diff;
-    Piece_t *piece = getPieceBycoord(init);
     // TODO mochikoma utsu detection
+    // need to combine with Makemove 
+    if(init.X == 0 && init.Y == 0){
+        if (getPieceBycoord(final)->type != ' ' )
+        {
+        printf("You're putting your own pieces on a existing piece. \n");
+        return false;
+        }
+        else if(bannmenn.turn == SENTE){
+            if(bannmenn.senteKomadai.komaList[getPieceNumByName(input.type)] != 0){
+                bannmenn.senteKomadai.komaList[getPieceNumByName(input.type)]--;
+            }else{
+            printf("You have no sufficient piece to put on the board. \n");
+            return false;
+            }
 
+        }else{
+            if(bannmenn.goteKomadai.komaList[getPieceNumByName(input.type)] != 0){
+                bannmenn.goteKomadai.komaList[getPieceNumByName(input.type)]--;
+            }else{
+            printf("You have no sufficient piece to put on the board. \n");
+            return false;
+            }
+        }
+        return true;
+        
+    }
+    Piece_t *piece = getPieceBycoord(init);
+    
+    
     // prevent accessing empty spaces
     if (piece->type == ' ')
     {
@@ -546,7 +578,7 @@ int getPieceNumByName(char *str)
     for (int i = FU; i <= GYOKU; i++)
     {
         for (int j = 0; j <= 1; j++)
-            if (pieceAttr[i].name[j] == str)
+            if (strcmp(pieceAttr[i].name[j], str)  == 0)
                 return i;
     }
     return -1;
