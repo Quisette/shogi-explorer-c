@@ -86,12 +86,14 @@ void exportToSFEN(char *str)
             
             append_str(str, bannmenn.pieces[i][j].type);
         }
-        if (i != 8 && j == 9)
-        {
-            if (blanks != 0)
-                append_str(str, blanks + '0');
+        if(j == 9 && blanks != 0)
+            append_str(str, blanks + '0');
+        if(i != 8)
             append_str(str, '/');
-        }
+        
+                
+            
+        
     }
     // teban recording
     append_str(str, ' ');
@@ -508,7 +510,7 @@ bool validMove(Location_t init, Location_t final)
             break;
         case 'r': // HI
             if (piece->promoted)
-                return (kakuMove(diff, init) || gyokuMove(diff));
+                return (hisyaMove(diff, init) || gyokuMove(diff));
             else
                 return hisyaMove(diff, init);
             break;
@@ -522,10 +524,13 @@ bool validMove(Location_t init, Location_t final)
 
 bool kinMove(Location_t loc, bool owner)
 {
-    if (owner == SENTE)
+    if (owner == SENTE){
         if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == -1 && abs(loc.X) == 1))
             return true;
-        else if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == 1 && abs(loc.X) == 1))
+    }
+        
+            
+    else if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == 1 && abs(loc.X) == 1))
             return true;
 
     return false;
@@ -575,6 +580,7 @@ bool kakuMove(Location_t diff, Location_t init)
         }
         return true;
     }
+    else return false;
 }
 bool hisyaMove(Location_t diff, Location_t init)
 {
@@ -597,11 +603,12 @@ bool hisyaMove(Location_t diff, Location_t init)
         }
         return true;
     }
+    else return false;
 }
 void generateKifu(Stack_t *stack)
 {
     FILE *fileptr;
-    fileptr = fopen("./kifu.sfencluster", "w");
+    fileptr = fopen("./kifu.sfenstack", "w");
     if (fileptr == NULL)
     {
         printf("!!!!!\n");
