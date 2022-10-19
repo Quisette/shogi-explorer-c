@@ -27,7 +27,21 @@ int main(int argc, char **argv)
         if (validMove(input.init, input.final))
         {
             outputSfen[0] = '\0';
-            makeMove(input.init, input.final, 1);
+            if(canPromote()){
+                int promote;
+                bool promotebool;
+                printf("成りますか\n");
+                scanf("%d", &promote);
+                if(promote >= 1){
+                    makeMove(input.init, input.final, 1);
+                }else 
+                    makeMove(input.init, input.final, 0);
+                getc(stdin);
+            }
+            else{
+                makeMove(input.init, input.final, 0);
+            }
+               
             renderBoard();
             puts("SFEN: ");
             exportToSFEN(outputSfen);

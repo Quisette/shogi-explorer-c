@@ -658,3 +658,16 @@ void generateKifu(Stack_t *stack)
     }
     fclose(fileptr);
 }
+bool canPromote(){
+    if(!(input.init.X == 0 || input.init.Y == 0)){
+        if(bannmenn.turn == SENTE){
+            if(input.final.Y <= 3 || input.init.Y <= 3)
+                return true;
+        }else{
+            if(input.final.Y >= 7 || input.init.Y >= 7)
+                return true;
+        }
+        return false;
+    }
+    return false;
+}

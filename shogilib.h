@@ -75,7 +75,6 @@ struct Board
 };
 struct SfenData
 {
-
     char *matrix[9];
     char turn; // turn
     char *mochiKomaList;
@@ -125,4 +124,5 @@ bool kinDetection(char type, Location_t diff);
 bool kakuMove(Location_t diff, Location_t init);
 bool hisyaMove(Location_t diff, Location_t init);
 void generateKifu(Stack_t *stack);
+bool canPromote();
 #endif // SHOGI_LIB
