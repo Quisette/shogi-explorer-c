@@ -125,4 +125,5 @@ bool kakuMove(Location_t diff, Location_t init);
 bool hisyaMove(Location_t diff, Location_t init);
 void generateKifu(Stack_t *stack);
 bool canPromote();
+bool revert();
 #endif // SHOGI_LIB

@@ -8,7 +8,7 @@
 extern Attr_t pieceAttr[14];
 extern Board_t bannmenn;
 extern UserInput_t input;
-Stack_t kifuStack;
+extern Stack_t kifuStack;
 
 int main(int argc, char **argv)
 {
@@ -16,39 +16,48 @@ int main(int argc, char **argv)
     char testSfen[100] = "9/9/9/9/4+B4/9/9/9/9 b - 1";
     char initSfen[100] = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1";
     char nextSfen[150];
-    char outputSfen[150];
+    char outputSfen[150] = "";
     initialize();
     // printf("%d",argc);
     if(argc >= 2 ){
         if((strcmp( argv[1],"-r") == 0)){
             fptr = fopen("./test.sfen","r");
             fgets(nextSfen,150,fptr);
+            push(initSfen,&kifuStack);
             if(!SFENParse(nextSfen))
             renderBoard();
         }
         else{
             printf("file opening failed. turn to initial board. \n");
+        push(initSfen,&kifuStack);
         if(!SFENParse(initSfen))
         renderBoard();
         }
     }else{
-        
+        push(initSfen,&kifuStack);
         if(!SFENParse(initSfen))
         renderBoard();
+        
     }
     
-    
-    while (userInput() == 0)
+    int inputcode;
+    while ((inputcode = userInput()) != -1)
     {
-
-        if (validMove(input.init, input.final))
+        
+        if(inputcode == 1){
+            revert();
+        
+        }
+        else if (validMove(input.init, input.final))
         {
+            
             outputSfen[0] = '\0';
+
             if(getPieceBycoord(input.init)->promoted == true){
                 makeMove(input.init, input.final, 1);
             }else if(canPromote()){
                 int promote;
-                printf("成りますか\n");
+                printf("<<成りますか？>>\n");
                 scanf("%d", &promote);
                 if(promote >= 1){
                     makeMove(input.init, input.final, 1);

@@ -8,6 +8,7 @@
 Attr_t pieceAttr[14];
 Board_t bannmenn;
 UserInput_t input;
+Stack_t kifuStack;
 
 char *token;
 // initialize the project;
@@ -165,7 +166,7 @@ bool SFENParse(char *sfen)
 void SFENLoad(SfenData_t data)
 {
     /* turn and move number parsing */
-    (data.turn == 'w') ? bannmenn.turn = SENTE : GOTE;
+    bannmenn.turn =  (data.turn == 'w') ? GOTE : SENTE;
     bannmenn.moveNumber = data.moveNumber;
     /* main board parsing */
     for (int i = 0; i < 9; i++)
@@ -334,6 +335,9 @@ int userInput()
     {
         if (strcmp(rawInput, "quit\n") == 0)
             return -1;
+        else if(strcmp(rawInput, "revert\n")== 0 ){
+            return 1;
+        }
         else
         {
             puts("Format Error. \nPlease enter the correct format.");
@@ -670,4 +674,19 @@ bool canPromote(){
         return false;
     }
     return false;
+}
+bool revert(){
+    
+    pop(&kifuStack);
+    char temp[150];
+    strcpy(temp, peek(&kifuStack));
+    if(!SFENParse(temp)){
+        renderBoard();
+        return 0;
+    }
+        
+    else{
+        printf("parsing from stack failed \n");
+        return 1;
+    }
 }
