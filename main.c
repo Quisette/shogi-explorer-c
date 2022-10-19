@@ -12,14 +12,31 @@ Stack_t kifuStack;
 
 int main(int argc, char **argv)
 {
-    
+    FILE *fptr;
     char testSfen[100] = "9/9/9/9/4+B4/9/9/9/9 b - 1";
     char initSfen[100] = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1";
-    char nextSfen[150] = "ln3g1nl/3sg1k2/p2psp1p1/4p1p1p/1p1P5/4PP2P/PP+rS2PP1/4G1SK1/L4G1NL b RB2Pbn 45 ";
+    char nextSfen[150];
     char outputSfen[150];
     initialize();
-    if(!SFENParse(initSfen))
+    // printf("%d",argc);
+    if(argc >= 2 ){
+        if((strcmp( argv[1],"-r") == 0)){
+            fptr = fopen("./test.sfen","r");
+            fgets(nextSfen,150,fptr);
+            if(!SFENParse(nextSfen))
+            renderBoard();
+        }
+        else{
+            printf("file opening failed. turn to initial board. \n");
+        if(!SFENParse(initSfen))
         renderBoard();
+        }
+    }else{
+        
+        if(!SFENParse(initSfen))
+        renderBoard();
+    }
+    
     
     while (userInput() == 0)
     {
@@ -27,14 +44,15 @@ int main(int argc, char **argv)
         if (validMove(input.init, input.final))
         {
             outputSfen[0] = '\0';
-            if(canPromote()){
+            if(getPieceBycoord(input.init)->promoted == true){
+                makeMove(input.init, input.final, 1);
+            }else if(canPromote()){
                 int promote;
-                bool promotebool;
                 printf("成りますか\n");
                 scanf("%d", &promote);
                 if(promote >= 1){
                     makeMove(input.init, input.final, 1);
-                }else 
+                }else
                     makeMove(input.init, input.final, 0);
                 getc(stdin);
             }
