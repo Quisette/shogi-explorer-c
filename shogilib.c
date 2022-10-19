@@ -373,9 +373,21 @@ void makeMove(Location_t init, Location_t final, bool promote)
 {
     if (init.X == 0 && init.Y == 0)
     {
+
         // TODO fix the owner issue and combine the mochikoma subtraction in ValidMove to here
+        if(bannmenn.turn == SENTE){
+            bannmenn.senteKomadai.komaList[getPieceNumByName(input.type)]--;
+            getPieceBycoord(final)->type = toupper(pieceAttr[getPieceNumByName(input.type)].sfen);
+
+        }else{
+            bannmenn.goteKomadai.komaList[getPieceNumByName(input.type)]--;
+            getPieceBycoord(final)->type = tolower(pieceAttr[getPieceNumByName(input.type)].sfen);
+
+        }
+        
         getPieceBycoord(final)->promoted = 0;
-        getPieceBycoord(final)->type = pieceAttr[getPieceNumByName(input.type)].sfen;
+        bannmenn.moveNumber++;
+        bannmenn.turn = !bannmenn.turn;
         return;
     }
     if (getPieceBycoord(final)->type != ' ')
@@ -417,23 +429,17 @@ bool validMove(Location_t init, Location_t final)
         return false;
         }
         else if(bannmenn.turn == SENTE){
-            if(bannmenn.senteKomadai.komaList[getPieceNumByName(input.type)] != 0){
-                bannmenn.senteKomadai.komaList[getPieceNumByName(input.type)]--;
-            }else{
-            printf("You have no sufficient piece to put on the board. \n");
-            return false;
+            if(bannmenn.senteKomadai.komaList[getPieceNumByName(input.type)] == 0){
+                printf("You have no sufficient piece to put on the board. \n");
+                return false;
             }
-
         }else{
-            if(bannmenn.goteKomadai.komaList[getPieceNumByName(input.type)] != 0){
-                bannmenn.goteKomadai.komaList[getPieceNumByName(input.type)]--;
-            }else{
-            printf("You have no sufficient piece to put on the board. \n");
-            return false;
+            if(bannmenn.goteKomadai.komaList[getPieceNumByName(input.type)] == 0){
+                printf("You have no sufficient piece to put on the board. \n");
+                return false;
             }
         }
         return true;
-        
     }
     Piece_t *piece = getPieceBycoord(init);
     
