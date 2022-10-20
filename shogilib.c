@@ -57,6 +57,18 @@ void initialize()
 // reads KIF file into the program.
 void readKifu(FILE *file)
 {
+    //incomplete. needs to reverse the reading or stack order. 
+    char buffer[150] = "";
+    if (file != NULL){
+        while(fgets(buffer,150,file) != NULL){
+            puts(buffer);
+            push(buffer,&kifuStack);
+            buffer[0] = '\0';
+        }
+        inspectStack(&kifuStack);
+
+        
+    }
 }
 // shows the current sfen (map of current bannmenn)
 void exportToSFEN(char *str)
@@ -337,6 +349,10 @@ int userInput()
             return -1;
         else if(strcmp(rawInput, "revert\n")== 0 ){
             return 1;
+        }
+        else if(strcmp(rawInput,"stack\n") == 0){
+            inspectStack(&kifuStack);
+            return 2;
         }
         else
         {
@@ -676,11 +692,11 @@ bool canPromote(){
     return false;
 }
 bool revert(){
-    // TODO stack has problem on kifu output
-    // pop(&kifuStack);
-    char temp[150];
+    char temp[150] = "";
     strcpy(temp, pop(&kifuStack));
     initializeBoard();
+    puts("SFEN: ");
+    puts(temp);
     if(!SFENParse(temp)){
         renderBoard();
         return 0;

@@ -16,59 +16,62 @@ int main(int argc, char **argv)
     char testSfen[100] = "9/9/9/9/4+B4/9/9/9/9 b - 1";
     char initSfen[100] = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1";
     char nextSfen[150];
-    char outputSfen[150] = "";
+    char usedSfen[150] = "";
     initialize();
     // printf("%d",argc);
     if(argc >= 3 ){
-        if((strcmp( argv[1],"-r") == 0)){
+        if((strcmp( argv[1],"--readsfen") == 0)){
             fptr = fopen(argv[2],"r");
             fgets(nextSfen,150,fptr);
-            push(nextSfen,&kifuStack);
+            // push(nextSfen,&kifuStack);
+            strcpy(usedSfen, nextSfen);
             if(!SFENParse(nextSfen))
             renderBoard();
-            strcpy(outputSfen, nextSfen);
+        }
+        else if(strcmp(argv[1],"--loadsfenstack") == 0){
+            fptr = fopen(argv[2],"r");
+            readKifu(fptr);
         }
         else{
-            printf("file opening failed. turn to initial board. \n");
+        printf("file opening failed. turn to initial board. \n");
         push(initSfen,&kifuStack);
+        strcpy(usedSfen, initSfen);
+
         if(!SFENParse(initSfen))
-        strcpy(outputSfen, initSfen);
         renderBoard();
         }
     }else{
-        push(initSfen,&kifuStack);
+        // push(initSfen,&kifuStack);
+        strcpy(usedSfen, initSfen);
+
         if(!SFENParse(initSfen))
         renderBoard();
-        strcpy(outputSfen, initSfen);
         
     }
     
     int inputcode;
     while ((inputcode = userInput()) != -1)
     {
-        puts("SFEN: ");
-        exportToSFEN(outputSfen);
-        push(outputSfen, &kifuStack);
-        printf("%s\n", peek(&kifuStack));
-
         if(inputcode == 1){
+            usedSfen[0] = '\0';
             revert();
-            outputSfen[0] = '\0';
-            exportToSFEN(outputSfen);
             // push(outputSfen, &kifuStack);
-            
-        
         }
+        else if (inputcode == 2)
+            puts("stack viewing complete.");
         else if (validMove(input.init, input.final))
         {
             
-            outputSfen[0] = '\0';
+            push(usedSfen, &kifuStack);
+            // printf("%s pushed to stack.\n", peek(&kifuStack));
+            usedSfen[0] = '\0';
 
             if(getPieceBycoord(input.init)->promoted == true){
+
                 makeMove(input.init, input.final, 1);
             }else if(canPromote()){
                 int promote;
-                printf("<<成りますか？>>\n");
+                printf("<<成りますか？>>\n>>");
                 scanf("%d", &promote);
                 if(promote >= 1){
                     makeMove(input.init, input.final, 1);
@@ -81,10 +84,12 @@ int main(int argc, char **argv)
             }
                
             renderBoard();
-            
+            puts("SFEN: ");
+            exportToSFEN(usedSfen);
+            puts(usedSfen);
         }
-        else
-            printf("Invalid move.\n");
+        
+        else printf("Invalid move.\n");
     }
     generateKifu(&kifuStack);
     return 0;

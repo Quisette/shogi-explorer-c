@@ -47,3 +47,11 @@ void push(char* data,Stack_t *stack) {
       printf("Could not insert data, Stack is full.\n");
    }
 }
+void inspectStack(Stack_t *stack){
+            for(int i= stack->top; i > 0; i--){
+                if(!isEmpty(stack))
+                  printf("E:: ");
+                  puts(stack->stack[i]);
+            }
+}
+   
