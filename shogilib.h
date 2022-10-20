@@ -126,4 +126,5 @@ bool hisyaMove(Location_t diff, Location_t init);
 void generateKifu(Stack_t *stack);
 bool canPromote();
 bool revert();
+void initializeBoard();
 #endif // SHOGI_LIB

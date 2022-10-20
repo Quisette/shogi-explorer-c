@@ -676,17 +676,30 @@ bool canPromote(){
     return false;
 }
 bool revert(){
-    
+    // TODO stack has problem on kifu output
     pop(&kifuStack);
     char temp[150];
-    strcpy(temp, peek(&kifuStack));
+    strcpy(temp, pop(&kifuStack));
     if(!SFENParse(temp)){
+        initializeBoard();
         renderBoard();
         return 0;
     }
-        
     else{
         printf("parsing from stack failed \n");
         return 1;
     }
+}
+void initializeBoard(){
+    for(int i = FU; i <= GYOKU; i++ ){
+    bannmenn.goteKomadai.komaList[i] = 0;
+    bannmenn.senteKomadai.komaList[i] = 0;
+    }
+    bannmenn.moveNumber = 0;
+    for(int i = 0; i <= 8; i++)for (int j = 0; j <= 8; j++){
+        bannmenn.pieces[i][j].promoted = 0;
+        bannmenn.pieces[i][j].type = ' ';
+    }
+    bannmenn.turn = 0;
+
 }

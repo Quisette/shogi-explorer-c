@@ -19,11 +19,11 @@ int main(int argc, char **argv)
     char outputSfen[150] = "";
     initialize();
     // printf("%d",argc);
-    if(argc >= 2 ){
+    if(argc >= 3 ){
         if((strcmp( argv[1],"-r") == 0)){
-            fptr = fopen("./test.sfen","r");
+            fptr = fopen(argv[2],"r");
             fgets(nextSfen,150,fptr);
-            push(initSfen,&kifuStack);
+            push(nextSfen,&kifuStack);
             if(!SFENParse(nextSfen))
             renderBoard();
         }
@@ -46,6 +46,10 @@ int main(int argc, char **argv)
         
         if(inputcode == 1){
             revert();
+            outputSfen[0] = '\0';
+            exportToSFEN(outputSfen);
+            push(outputSfen, &kifuStack);
+            printf("%s\n", peek(&kifuStack));
         
         }
         else if (validMove(input.init, input.final))
