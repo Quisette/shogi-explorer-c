@@ -31,4 +31,5 @@ char* pop(Stack_t *stack);
 void push( char* data,Stack_t *stack);
 
 void inspectStack(Stack_t *stack);
+void reverse(Stack_t *stack);
 #endif //STACK_LIB

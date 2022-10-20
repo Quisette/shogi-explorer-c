@@ -1,5 +1,4 @@
 #include "stacklib.h"
-
 #include<stdio.h>
 void initializeStack(Stack_t *stack){
     stack->top = -1;
@@ -48,10 +47,21 @@ void push(char* data,Stack_t *stack) {
    }
 }
 void inspectStack(Stack_t *stack){
-            for(int i= stack->top; i > 0; i--){
+            for(int i= stack->top ; i >= 0; i--){
                 if(!isEmpty(stack))
                   printf("E:: ");
                   puts(stack->stack[i]);
             }
+}
+void reverse(Stack_t *stack){
+   Stack_t *tempStack = malloc(1 * sizeof(Stack_t));
+   initializeStack(tempStack);
+   while (!isEmpty(stack))
+   {
+      push(pop(stack), tempStack);
+   }
+   *stack = *tempStack;
+   // inspectStack(tempStack);
+   
 }
    

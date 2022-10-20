@@ -57,17 +57,15 @@ void initialize()
 // reads KIF file into the program.
 void readKifu(FILE *file)
 {
-    //incomplete. needs to reverse the reading or stack order. 
+    //TODO use linkedlist to read kifu file
     char buffer[150] = "";
     if (file != NULL){
         while(fgets(buffer,150,file) != NULL){
-            puts(buffer);
+            // puts(buffer);
             push(buffer,&kifuStack);
             buffer[0] = '\0';
         }
-        inspectStack(&kifuStack);
-
-        
+        // inspectStack(&kifuStack);
     }
 }
 // shows the current sfen (map of current bannmenn)
@@ -332,8 +330,18 @@ void renderBoard()
     puts("\n------------------");
 }
 // let the user browse through shogi moves
-void scrollKifu()
+enum{
+    PREV,
+    NEXT
+};
+void scrollKifu( bool function)
 {
+    // if(function == PREV){
+
+    // }
+    // else{
+
+    // }
 }
 // let user enter the move to interact with the shogi board
 int userInput()
@@ -666,7 +674,7 @@ bool hisyaMove(Location_t diff, Location_t init)
 void generateKifu(Stack_t *stack)
 {
     FILE *fileptr;
-    fileptr = fopen("./kifu.sfenstack", "w");
+    fileptr = fopen("./kifu.sfenlist", "w");
     if (fileptr == NULL)
     {
         printf("!!!!!\n");

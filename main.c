@@ -12,6 +12,8 @@ extern Stack_t kifuStack;
 
 int main(int argc, char **argv)
 {
+
+    ////////////////////////
     FILE *fptr;
     char testSfen[100] = "9/9/9/9/4+B4/9/9/9/9 b - 1";
     char initSfen[100] = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1";
@@ -91,6 +93,7 @@ int main(int argc, char **argv)
         
         else printf("Invalid move.\n");
     }
+    reverse(&kifuStack);
     generateKifu(&kifuStack);
     return 0;
 }
