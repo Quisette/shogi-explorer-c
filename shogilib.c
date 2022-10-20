@@ -677,11 +677,11 @@ bool canPromote(){
 }
 bool revert(){
     // TODO stack has problem on kifu output
-    pop(&kifuStack);
+    // pop(&kifuStack);
     char temp[150];
     strcpy(temp, pop(&kifuStack));
+    initializeBoard();
     if(!SFENParse(temp)){
-        initializeBoard();
         renderBoard();
         return 0;
     }

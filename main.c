@@ -26,30 +26,37 @@ int main(int argc, char **argv)
             push(nextSfen,&kifuStack);
             if(!SFENParse(nextSfen))
             renderBoard();
+            strcpy(outputSfen, nextSfen);
         }
         else{
             printf("file opening failed. turn to initial board. \n");
         push(initSfen,&kifuStack);
         if(!SFENParse(initSfen))
+        strcpy(outputSfen, initSfen);
         renderBoard();
         }
     }else{
         push(initSfen,&kifuStack);
         if(!SFENParse(initSfen))
         renderBoard();
+        strcpy(outputSfen, initSfen);
         
     }
     
     int inputcode;
     while ((inputcode = userInput()) != -1)
     {
-        
+        puts("SFEN: ");
+        exportToSFEN(outputSfen);
+        push(outputSfen, &kifuStack);
+        printf("%s\n", peek(&kifuStack));
+
         if(inputcode == 1){
             revert();
             outputSfen[0] = '\0';
             exportToSFEN(outputSfen);
-            push(outputSfen, &kifuStack);
-            printf("%s\n", peek(&kifuStack));
+            // push(outputSfen, &kifuStack);
+            
         
         }
         else if (validMove(input.init, input.final))
@@ -74,10 +81,7 @@ int main(int argc, char **argv)
             }
                
             renderBoard();
-            puts("SFEN: ");
-            exportToSFEN(outputSfen);
-            push(outputSfen, &kifuStack);
-            printf("%s\n", peek(&kifuStack));
+            
         }
         else
             printf("Invalid move.\n");
