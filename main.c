@@ -12,14 +12,13 @@ extern Stack_t kifuStack;
 
 int main(int argc, char **argv)
 {
-
-    ////////////////////////
     FILE *fptr;
     char testSfen[100] = "9/9/9/9/4+B4/9/9/9/9 b - 1";
     char initSfen[100] = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1";
     char nextSfen[150];
     char usedSfen[150] = "";
     initialize();
+    initializeStack(&kifuStack);
     // printf("%d",argc);
     if(argc >= 3 ){
         if((strcmp( argv[1],"--readsfen") == 0)){
@@ -73,12 +72,20 @@ int main(int argc, char **argv)
                 makeMove(input.init, input.final, 1);
             }else if(canPromote()){
                 int promote;
-                printf("<<成りますか？>>\n>>");
-                scanf("%d", &promote);
-                if(promote >= 1){
+                char buffer[7];
+                
+                printf("<<成りますか？>>(naru, narazu)\n>>");
+                while(scanf("%s", buffer)){
+                    if(strcmp(buffer, "naru") == 0){
                     makeMove(input.init, input.final, 1);
-                }else
+                    break;
+                    }
+                    else if (strcmp(buffer, "narazu") == 0){
                     makeMove(input.init, input.final, 0);
+                    break;
+                    }
+                    else printf("Your promotion argument is not OK.\n>>");
+                }
                 getc(stdin);
             }
             else{

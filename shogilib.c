@@ -274,7 +274,7 @@ int getPieceNumber(char c)
 }
 void renderBoard()
 {
-    // printf("\033c"); // clear screen
+    printf("\033c"); // clear screen
     // displays data
     puts("------------------");
 
@@ -355,16 +355,18 @@ int userInput()
     {
         if (strcmp(rawInput, "quit\n") == 0)
             return -1;
-        else if(strcmp(rawInput, "revert\n")== 0 ){
+        else if(strcmp(rawInput, "revert\n")== 0 )
             return 1;
-        }
-        else if(strcmp(rawInput,"stack\n") == 0){
-            inspectStack(&kifuStack);
+        else if(strcmp(rawInput, "stack\n")== 0){
+             inspectStack(&kifuStack);
             return 2;
+        }else if(strcmp(rawInput, "\n" ) == 0) {
+            printf(">>");
+            fgets(rawInput, 20, stdin);
         }
         else
         {
-            puts("Format Error. \nPlease enter the correct format.");
+            puts("Format Error. \nPlease enter the correct format.\n>>");
             fgets(rawInput, 20, stdin);
         }
     }
