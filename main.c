@@ -26,7 +26,7 @@ int main(int argc, char **argv)
         {
             fptr = fopen(argv[2], "r");
             fgets(nextSfen, 150, fptr);
-            // push(nextSfen,&kifuStack);
+            push(nextSfen,&kifuStack);
             strcpy(usedSfen, nextSfen);
             if (!SFENParse(nextSfen))
                 renderBoard();
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        // push(initSfen,&kifuStack);
+        push(initSfen,&kifuStack);
         strcpy(usedSfen, initSfen);
 
         if (!SFENParse(initSfen))
@@ -62,14 +62,14 @@ int main(int argc, char **argv)
         {
             usedSfen[0] = '\0';
             revert();
-            // push(outputSfen, &kifuStack);
+            strcpy(usedSfen, peek(&kifuStack));
+            // push(usedSfen, &kifuStack);
         }
         else if (inputcode == 2)
             puts("stack viewing complete.");
         else if (validMove(input.init, input.final))
         {
 
-            push(usedSfen, &kifuStack);
             // printf("%s pushed to stack.\n", peek(&kifuStack));
             usedSfen[0] = '\0';
 
@@ -100,6 +100,7 @@ int main(int argc, char **argv)
                         printf("Your promotion argument is not OK.\n>>");
                 }
                 getc(stdin);
+
             }
             else
             {
@@ -109,7 +110,8 @@ int main(int argc, char **argv)
             renderBoard();
             puts("SFEN: ");
             exportToSFEN(usedSfen);
-            puts(usedSfen);
+            push(usedSfen, &kifuStack);
+            // puts(usedSfen);
         }
 
         else

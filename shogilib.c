@@ -271,7 +271,7 @@ int getPieceNumber(char c)
 }
 void renderBoard()
 {
-    printf("\033c"); // clear screen
+    // printf("\033c"); // clear screen
     // displays data
     puts("------------------");
 
@@ -718,10 +718,12 @@ bool canPromote()
 bool revert()
 {
     char temp[150] = "";
-    strcpy(temp, pop(&kifuStack));
+    pop(&kifuStack);
+    strcpy(temp, peek(&kifuStack));
+    // push(temp,&kifuStack);
     initializeBoard();
-    puts("SFEN: ");
-    puts(temp);
+    // puts("SFEN: ");
+    // puts(temp);
     if (!SFENParse(temp))
     {
         renderBoard();

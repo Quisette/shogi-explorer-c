@@ -35,6 +35,8 @@ char *pop(Stack_t *stack)
    {
       data = stack->stack[stack->top];
       stack->top = stack->top - 1;
+      printf("%s popped from stack.\n", data);
+
       return data;
    }
    else
@@ -50,6 +52,7 @@ void push(char *data, Stack_t *stack)
    {
       stack->top = stack->top + 1;
       strcpy(stack->stack[stack->top], data);
+      printf("%s pushed to stack.\n", data);
    }
    else
    {
