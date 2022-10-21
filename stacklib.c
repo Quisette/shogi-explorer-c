@@ -1,5 +1,6 @@
 #include "stacklib.h"
 #include <stdio.h>
+// #define SHOW_PUSH_POP
 void initializeStack(Stack_t *stack)
 {
    stack->top = -1;
@@ -35,8 +36,9 @@ char *pop(Stack_t *stack)
    {
       data = stack->stack[stack->top];
       stack->top = stack->top - 1;
+      #ifdef SHOW_PUSH_POP
       printf("%s popped from stack.\n", data);
-
+      #endif
       return data;
    }
    else
@@ -52,7 +54,9 @@ void push(char *data, Stack_t *stack)
    {
       stack->top = stack->top + 1;
       strcpy(stack->stack[stack->top], data);
+      #ifdef SHOW_PUSH_POP
       printf("%s pushed to stack.\n", data);
+      #endif
    }
    else
    {
