@@ -52,17 +52,18 @@ void initialize()
     pieceAttr[KAKU].name[1] = "uma";
     pieceAttr[HI].name[1] = "ryu";
     pieceAttr[GYOKU].name[1] = "gyoku";
-
 }
 // reads KIF file into the program.
 void readKifu(FILE *file)
 {
-    //TODO use linkedlist to read kifu file
+    // TODO use linkedlist to read kifu file
     char buffer[150] = "";
-    if (file != NULL){
-        while(fgets(buffer,150,file) != NULL){
+    if (file != NULL)
+    {
+        while (fgets(buffer, 150, file) != NULL)
+        {
             // puts(buffer);
-            push(buffer,&kifuStack);
+            push(buffer, &kifuStack);
             buffer[0] = '\0';
         }
         // inspectStack(&kifuStack);
@@ -70,7 +71,7 @@ void readKifu(FILE *file)
 }
 // shows the current sfen (map of current bannmenn)
 void exportToSFEN(char *str)
-{ 
+{
     // char str[150]  = "";
     char numstr[4] = "";
     int blanks = 0;
@@ -97,17 +98,13 @@ void exportToSFEN(char *str)
                 append_str(str, '+');
                 // continue;
             }
-            
+
             append_str(str, bannmenn.pieces[i][j].type);
         }
-        if(j == 9 && blanks != 0)
+        if (j == 9 && blanks != 0)
             append_str(str, blanks + '0');
-        if(i != 8)
+        if (i != 8)
             append_str(str, '/');
-        
-                
-            
-        
     }
     // teban recording
     append_str(str, ' ');
@@ -176,7 +173,7 @@ bool SFENParse(char *sfen)
 void SFENLoad(SfenData_t data)
 {
     /* turn and move number parsing */
-    bannmenn.turn =  (data.turn == 'w') ? GOTE : SENTE;
+    bannmenn.turn = (data.turn == 'w') ? GOTE : SENTE;
     bannmenn.moveNumber = data.moveNumber;
     /* main board parsing */
     for (int i = 0; i < 9; i++)
@@ -330,11 +327,12 @@ void renderBoard()
     puts("\n------------------");
 }
 // let the user browse through shogi moves
-enum{
+enum
+{
     PREV,
     NEXT
 };
-void scrollKifu( bool function)
+void scrollKifu(bool function)
 {
     // if(function == PREV){
 
@@ -355,12 +353,15 @@ int userInput()
     {
         if (strcmp(rawInput, "quit\n") == 0)
             return -1;
-        else if(strcmp(rawInput, "revert\n")== 0 )
+        else if (strcmp(rawInput, "revert\n") == 0)
             return 1;
-        else if(strcmp(rawInput, "stack\n")== 0){
-             inspectStack(&kifuStack);
+        else if (strcmp(rawInput, "stack\n") == 0)
+        {
+            inspectStack(&kifuStack);
             return 2;
-        }else if(strcmp(rawInput, "\n" ) == 0) {
+        }
+        else if (strcmp(rawInput, "\n") == 0)
+        {
             printf(">>");
             fgets(rawInput, 20, stdin);
         }
@@ -405,16 +406,17 @@ void makeMove(Location_t init, Location_t final, bool promote)
     {
 
         // TODO fix the owner issue and combine the mochikoma subtraction in ValidMove to here
-        if(bannmenn.turn == SENTE){
+        if (bannmenn.turn == SENTE)
+        {
             bannmenn.senteKomadai.komaList[getPieceNumByName(input.type)]--;
             getPieceBycoord(final)->type = toupper(pieceAttr[getPieceNumByName(input.type)].sfen);
-
-        }else{
+        }
+        else
+        {
             bannmenn.goteKomadai.komaList[getPieceNumByName(input.type)]--;
             getPieceBycoord(final)->type = tolower(pieceAttr[getPieceNumByName(input.type)].sfen);
-
         }
-        
+
         getPieceBycoord(final)->promoted = 0;
         bannmenn.moveNumber++;
         bannmenn.turn = !bannmenn.turn;
@@ -451,20 +453,26 @@ bool validMove(Location_t init, Location_t final)
 {
     Location_t diff;
     // TODO mochikoma utsu detection
-    // need to combine with Makemove 
-    if(init.X == 0 && init.Y == 0){
-        if (getPieceBycoord(final)->type != ' ' )
+    // need to combine with Makemove
+    if (init.X == 0 && init.Y == 0)
+    {
+        if (getPieceBycoord(final)->type != ' ')
         {
-        printf("You're putting your own pieces on a existing piece. \n");
-        return false;
+            printf("You're putting your own pieces on a existing piece. \n");
+            return false;
         }
-        else if(bannmenn.turn == SENTE){
-            if(bannmenn.senteKomadai.komaList[getPieceNumByName(input.type)] == 0){
+        else if (bannmenn.turn == SENTE)
+        {
+            if (bannmenn.senteKomadai.komaList[getPieceNumByName(input.type)] == 0)
+            {
                 printf("You have no sufficient piece to put on the board. \n");
                 return false;
             }
-        }else{
-            if(bannmenn.goteKomadai.komaList[getPieceNumByName(input.type)] == 0){
+        }
+        else
+        {
+            if (bannmenn.goteKomadai.komaList[getPieceNumByName(input.type)] == 0)
+            {
                 printf("You have no sufficient piece to put on the board. \n");
                 return false;
             }
@@ -472,8 +480,7 @@ bool validMove(Location_t init, Location_t final)
         return true;
     }
     Piece_t *piece = getPieceBycoord(init);
-    
-    
+
     // prevent accessing empty spaces
     if (piece->type == ' ')
     {
@@ -592,14 +599,14 @@ bool validMove(Location_t init, Location_t final)
 
 bool kinMove(Location_t loc, bool owner)
 {
-    if (owner == SENTE){
+    if (owner == SENTE)
+    {
         if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == -1 && abs(loc.X) == 1))
             return true;
     }
-        
-            
+
     else if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == 1 && abs(loc.X) == 1))
-            return true;
+        return true;
 
     return false;
 }
@@ -614,7 +621,7 @@ int getPieceNumByName(char *str)
     for (int i = FU; i <= GYOKU; i++)
     {
         for (int j = 0; j <= 1; j++)
-            if (strcmp(pieceAttr[i].name[j], str)  == 0)
+            if (strcmp(pieceAttr[i].name[j], str) == 0)
                 return i;
     }
     return -1;
@@ -648,7 +655,8 @@ bool kakuMove(Location_t diff, Location_t init)
         }
         return true;
     }
-    else return false;
+    else
+        return false;
 }
 bool hisyaMove(Location_t diff, Location_t init)
 {
@@ -671,7 +679,8 @@ bool hisyaMove(Location_t diff, Location_t init)
         }
         return true;
     }
-    else return false;
+    else
+        return false;
 }
 void generateKifu(Stack_t *stack)
 {
@@ -688,44 +697,55 @@ void generateKifu(Stack_t *stack)
     }
     fclose(fileptr);
 }
-bool canPromote(){
-    if(!(input.init.X == 0 || input.init.Y == 0)){
-        if(bannmenn.turn == SENTE){
-            if(input.final.Y <= 3 || input.init.Y <= 3)
+bool canPromote()
+{
+    if (!(input.init.X == 0 || input.init.Y == 0))
+    {
+        if (bannmenn.turn == SENTE)
+        {
+            if (input.final.Y <= 3 || input.init.Y <= 3)
                 return true;
-        }else{
-            if(input.final.Y >= 7 || input.init.Y >= 7)
+        }
+        else
+        {
+            if (input.final.Y >= 7 || input.init.Y >= 7)
                 return true;
         }
         return false;
     }
     return false;
 }
-bool revert(){
+bool revert()
+{
     char temp[150] = "";
     strcpy(temp, pop(&kifuStack));
     initializeBoard();
     puts("SFEN: ");
     puts(temp);
-    if(!SFENParse(temp)){
+    if (!SFENParse(temp))
+    {
         renderBoard();
         return 0;
     }
-    else{
+    else
+    {
         printf("parsing from stack failed \n");
         return 1;
     }
 }
-void initializeBoard(){
-    for(int i = FU; i <= GYOKU; i++ ){
-    bannmenn.goteKomadai.komaList[i] = 0;
-    bannmenn.senteKomadai.komaList[i] = 0;
+void initializeBoard()
+{
+    for (int i = FU; i <= GYOKU; i++)
+    {
+        bannmenn.goteKomadai.komaList[i] = 0;
+        bannmenn.senteKomadai.komaList[i] = 0;
     }
     bannmenn.moveNumber = 0;
-    for(int i = 0; i <= 8; i++)for (int j = 0; j <= 8; j++){
-        bannmenn.pieces[i][j].promoted = 0;
-        bannmenn.pieces[i][j].type = ' ';
-    }
+    for (int i = 0; i <= 8; i++)
+        for (int j = 0; j <= 8; j++)
+        {
+            bannmenn.pieces[i][j].promoted = 0;
+            bannmenn.pieces[i][j].type = ' ';
+        }
     bannmenn.turn = 0;
-
 }

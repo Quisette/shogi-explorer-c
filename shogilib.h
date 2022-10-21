@@ -14,12 +14,9 @@ typedef struct Attr Attr_t;
 typedef struct Komadai Komadai_t;
 typedef struct UserInput UserInput_t;
 typedef struct Location Location_t;
-typedef struct Piece  Piece_t;
+typedef struct Piece Piece_t;
 typedef struct Board Board_t;
 typedef struct SfenData SfenData_t;
-
-
-
 
 // type of pieces
 
@@ -97,7 +94,7 @@ void initialize();
 // reads KIF file into the program.
 void readKifu(FILE *file);
 // shows the current sfen (map of current bannmenn)
-void exportToSFEN(char* str);
+void exportToSFEN(char *str);
 // shows the board based on current database+
 void renderBoard();
 // let the user browse through shogi moves
@@ -119,7 +116,7 @@ Location_t *moveDiff(Location_t init, Location_t final);
 bool kinMove(Location_t loc, bool owner);
 bool validMove(Location_t init, Location_t final);
 bool gyokuMove(Location_t loc);
-int getPieceNumByName(char* str);
+int getPieceNumByName(char *str);
 bool kinDetection(char type, Location_t diff);
 bool kakuMove(Location_t diff, Location_t init);
 bool hisyaMove(Location_t diff, Location_t init);

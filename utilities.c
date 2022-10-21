@@ -60,9 +60,8 @@ char max(char a, char b)
     return a > b ? a : b;
 }
 
-
-void append_str(char str[] , char c){
-     auto char arr[2] = {c , '\0'};
-     strcat(str , arr);
+void append_str(char str[], char c)
+{
+    auto char arr[2] = {c, '\0'};
+    strcat(str, arr);
 }
-
