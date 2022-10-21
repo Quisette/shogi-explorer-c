@@ -67,10 +67,15 @@ int main(int argc, char **argv)
         }
         else if (inputcode == 2)
             puts("stack viewing complete.");
+        else if (inputcode == 3){
+            puts("SFEN: ");
+            usedSfen[0] = '\0';
+            exportToSFEN(usedSfen);
+            puts(usedSfen);
+        }
         else if (validMove(input.init, input.final))
         {
 
-            // printf("%s pushed to stack.\n", peek(&kifuStack));
             usedSfen[0] = '\0';
 
             if (getPieceBycoord(input.init)->promoted == true)
@@ -108,7 +113,6 @@ int main(int argc, char **argv)
             }
 
             renderBoard();
-            puts("SFEN: ");
             exportToSFEN(usedSfen);
             push(usedSfen, &kifuStack);
             // puts(usedSfen);

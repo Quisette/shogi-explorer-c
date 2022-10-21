@@ -359,6 +359,8 @@ int userInput()
         {
             inspectStack(&kifuStack);
             return 2;
+        }else if(strcmp(rawInput, "sfen\n") == 0){
+            return 3;
         }
         else if (strcmp(rawInput, "\n") == 0)
         {
