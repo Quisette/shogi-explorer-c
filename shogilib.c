@@ -369,7 +369,8 @@ int userInput()
         }
         else
         {
-            puts("Format Error. \nPlease enter the correct format.\n>>");
+            
+            printf("Format Error. \nPlease enter the correct format.\n>>");
             fgets(rawInput, 20, stdin);
         }
     }
