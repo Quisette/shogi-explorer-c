@@ -2,8 +2,7 @@
 
 #ifndef UTILITIES_LIB
 #define UTILITIES_LIB
-enum ColorCode
-{
+enum ColorCode {
     BLUE = 36,
     RED = 31
 };
@@ -13,4 +12,4 @@ char ctoi(char c);
 char max(char a, char b);
 void append_str(char str[], char c);
 
-#endif // UTILITIES_LIB
+#endif  // UTILITIES_LIB

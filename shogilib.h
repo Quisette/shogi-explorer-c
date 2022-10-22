@@ -1,10 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "utilities.h"
-#include "stacklib.h"
 #include <math.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "linkedlist/linkedlist.h"
+#include "stacklib.h"
+#include "utilities.h"
 #ifndef SHOGI_LIB
 #define SHOGI_LIB
 #define SFEN_REGEX "[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9} [wb] [-plnsgkrbPLNSGKRB1-9]+ [1-9]+"
@@ -20,8 +21,7 @@ typedef struct SfenData SfenData_t;
 
 // type of pieces
 
-enum PieceType
-{
+enum PieceType {
     FU,
     KYO,
     KEI,
@@ -33,19 +33,16 @@ enum PieceType
 };
 
 // shows the owner of the piece
-enum PieceOwner
-{
+enum PieceOwner {
     SENTE = 0,
     GOTE = 1
 };
-struct Attr
-{
+struct Attr {
     char sfen;
     char *displayChar[2];
     char *name[2];
 };
-struct Piece
-{
+struct Piece {
     // indicates if there is a piece. if the position is empty, this bool should be turned down.
     //  when active is false, the program should not read other value of this object.
     // shows the type of the current piece
@@ -53,16 +50,14 @@ struct Piece
     // shows if this piece is promoted
     bool promoted;
 };
-struct Komadai
-{
+struct Komadai {
     u_int8_t komaList[8];
     /*
     komaList stores the number of each pieces, numbered by PieceType.
     EX: komaList[3] stores the number of GIN pieces
     */
 };
-struct Board
-{
+struct Board {
     //
     Piece_t pieces[9][9];
     // Komadais for each player
@@ -70,20 +65,17 @@ struct Board
     int moveNumber;
     bool turn;
 };
-struct SfenData
-{
+struct SfenData {
     char *matrix[9];
-    char turn; // turn
+    char turn;  // turn
     char *mochiKomaList;
     int moveNumber;
 };
-struct Location
-{
+struct Location {
     int X;
     int Y;
 };
-struct UserInput
-{
+struct UserInput {
     char type[10];
     Location_t init;
     Location_t final;
@@ -124,4 +116,4 @@ void generateKifu(Stack_t *stack);
 bool canPromote();
 bool revert();
 void initializeBoard();
-#endif // SHOGI_LIB
+#endif  // SHOGI_LIB

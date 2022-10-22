@@ -1,136 +1,99 @@
+#include <regex.h>
 #include <stdio.h>
-#include "utilities.h"
+#include <string.h>
+
+#include "linkedlist/linkedlist.h"
 #include "shogilib.h"
 #include "stacklib.h"
-#include"linkedlist/linkedlist.h"
-#include <string.h>
-#include <regex.h>
+#include "utilities.h"
 
 extern Attr_t pieceAttr[14];
 extern Board_t bannmenn;
 extern UserInput_t input;
 extern Stack_t kifuStack;
 extern List_t *kifuList;
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     FILE *fptr;
-    char testSfen[100] = "9/9/9/9/4+B4/9/9/9/9 b - 1";
     char initSfen[100] = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1";
-    char nextSfen[150];
-    char usedSfen[150] = "";
+    char sfenBuffer[150] = "";
     initialize();
     initializeStack(&kifuStack);
     // printf("%d",argc);
-    if (argc >= 3)
-    {
-        if ((strcmp(argv[1], "--readsfen") == 0))
-        {
+    if (argc >= 3) {
+        if ((strcmp(argv[1], "--readsfen") == 0)) {
             fptr = fopen(argv[2], "r");
-            fgets(nextSfen, 150, fptr);
-            push(nextSfen,&kifuStack);
-            strcpy(usedSfen, nextSfen);
-            if (!SFENParse(nextSfen))
+            fgets(sfenBuffer, 150, fptr);
+            push(sfenBuffer, &kifuStack);
+            if (!SFENParse(sfenBuffer))
                 renderBoard();
-        }
-        else if (strcmp(argv[1], "--loadsfenlist") == 0)
-        {
+        } else if (strcmp(argv[1], "--loadsfenlist") == 0) {
             fptr = fopen(argv[2], "r");
             readKifu(fptr);
             if (!SFENParse(kifuList->head->data))
                 renderBoard();
-            else puts("SFEN parsing failed\n");
+            else
+                puts("SFEN parsing failed\n");
 
-            Node_t currentState =*(kifuList->head);
-            char arg; 
-            while(arg = getc(stdin)){
-                if(arg == 'f')
-                    scrollKifu(1,&currentState);
+            Node_t currentState = *(kifuList->head);
+            char arg;
+            while (arg = getc(stdin)) {
+                if (arg == 'f')
+                    scrollKifu(1, &currentState);
                 else if (arg == 'b')
-                    scrollKifu(0,&currentState);
+                    scrollKifu(0, &currentState);
             }
 
-        }
-        else
-        {
+        } else {
             printf("file opening failed. turn to initial board. \n");
             push(initSfen, &kifuStack);
-            strcpy(usedSfen, initSfen);
-
             if (!SFENParse(initSfen))
                 renderBoard();
         }
-    }
-    else
-    {
-        push(initSfen,&kifuStack);
-        strcpy(usedSfen, initSfen);
-
+    } else {
+        push(initSfen, &kifuStack);
         if (!SFENParse(initSfen))
             renderBoard();
     }
 
     int inputcode;
-    while ((inputcode = userInput()) != -1)
-    {
-        //TODO remove usedSfen since SFENParse does not modify strings anymore
-        if (inputcode == 1)
-        {
-            usedSfen[0] = '\0';
+    while ((inputcode = userInput()) != -1) {
+        if (inputcode == 1) {
             revert();
-            strcpy(usedSfen, peek(&kifuStack));
-            // push(usedSfen, &kifuStack);
-        }
-        else if (inputcode == 2)
+        } else if (inputcode == 2)
             puts("stack viewing complete.");
-        else if (inputcode == 3){
+        else if (inputcode == 3) {
             puts("SFEN: ");
-            usedSfen[0] = '\0';
-            exportToSFEN(usedSfen);
-            puts(usedSfen);
-        }
-        else if (validMove(input.init, input.final))
-        {
+            sfenBuffer[0] = '\0';
+            exportToSFEN(sfenBuffer);
+            puts(sfenBuffer);
+        } else if (validMove(input.init, input.final)) {
+            sfenBuffer[0] = '\0';
 
-            usedSfen[0] = '\0';
-
-            if (getPieceBycoord(input.init)->promoted == true)
-            {
-
+            if (getPieceBycoord(input.init)->promoted == true) {
                 makeMove(input.init, input.final, 1);
-            }
-            else if (canPromote())
-            {
+            } else if (canPromote()) {
                 int promote;
                 char buffer[7];
 
                 printf("<<成りますか？>>(naru, narazu)\n>>");
-                while (scanf("%s", buffer))
-                {
-                    if (strcmp(buffer, "naru") == 0)
-                    {
+                while (fgets(buffer, 7, stdin)) {
+                    if (strcmp(buffer, "naru\n") == 0) {
                         makeMove(input.init, input.final, 1);
                         break;
-                    }
-                    else if (strcmp(buffer, "narazu") == 0)
-                    {
+                    } else if (strcmp(buffer, "narazu\n") == 0) {
                         makeMove(input.init, input.final, 0);
                         break;
-                    }
-                    else
+                    } else
                         printf("Your promotion argument is not OK.\n>>");
                 }
-                getc(stdin);
 
-            }
-            else
-            {
+            } else {
                 makeMove(input.init, input.final, 0);
             }
 
             renderBoard();
-            exportToSFEN(usedSfen);
-            push(usedSfen, &kifuStack);
-            // puts(usedSfen);
+            exportToSFEN(sfenBuffer);
+            push(sfenBuffer, &kifuStack);
         }
 
         else

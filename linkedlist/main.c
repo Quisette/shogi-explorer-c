@@ -1,7 +1,8 @@
-#include<stdio.h>
-#include"linkedlist.h"
+#include <stdio.h>
 
-int main(){
+#include "linkedlist.h"
+
+int main() {
     List_t *list = initializeList("first");
     char str1[5] = "test";
     char str2[6] = "test2";
