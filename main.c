@@ -32,13 +32,23 @@ int main(int argc, char **argv)
             if (!SFENParse(nextSfen))
                 renderBoard();
         }
-        else if (strcmp(argv[1], "--loadsfenstack") == 0)
+        else if (strcmp(argv[1], "--loadsfenlist") == 0)
         {
             fptr = fopen(argv[2], "r");
             readKifu(fptr);
             if (!SFENParse(kifuList->head->data))
                 renderBoard();
             else puts("SFEN parsing failed\n");
+
+            Node_t currentState =*(kifuList->head);
+            char arg; 
+            while(arg = getc(stdin)){
+                if(arg == 'f')
+                    scrollKifu(1,&currentState);
+                else if (arg == 'b')
+                    scrollKifu(0,&currentState);
+            }
+
         }
         else
         {
@@ -62,6 +72,7 @@ int main(int argc, char **argv)
     int inputcode;
     while ((inputcode = userInput()) != -1)
     {
+        //TODO remove usedSfen since SFENParse does not modify strings anymore
         if (inputcode == 1)
         {
             usedSfen[0] = '\0';

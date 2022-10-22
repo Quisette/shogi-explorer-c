@@ -4,7 +4,7 @@
 #include "stacklib.h"
 #include <math.h>
 #include <stdbool.h>
-
+#include "linkedlist/linkedlist.h"
 #ifndef SHOGI_LIB
 #define SHOGI_LIB
 #define SFEN_REGEX "[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9}\\/[+plnsgkrbPLNSGKRB1-9]{1,9} [wb] [-plnsgkrbPLNSGKRB1-9]+ [1-9]+"
@@ -98,7 +98,7 @@ void exportToSFEN(char *str);
 // shows the board based on current database+
 void renderBoard();
 // let the user browse through shogi moves
-void scrollKifu(bool function);
+void scrollKifu(bool function, Node_t *current);
 // let user enter the move to interact with the shogi board
 int userInput();
 // back to the origin from user inputs

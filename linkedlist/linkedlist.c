@@ -28,7 +28,7 @@ void printList(List_t list){
     int count = 0;
     Node_t *ptr = list.head;
     while(ptr  != NULL){
-        printf("%s\n", ptr->data);
+        printf("L:: %s\n", ptr->data);
         ptr = ptr->next;
     }
         

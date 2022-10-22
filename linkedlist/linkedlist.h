@@ -2,7 +2,8 @@
 #include<stdlib.h>
 #include<string.h>
 #include "../utilities.h"
-
+#ifndef LL_H
+#define LL_H
 
 typedef struct Node{
     char *data;
@@ -20,3 +21,5 @@ List_t *initializeList(char* FirstNodeData);
 void append(char* str, List_t *list);
 void printList(List_t list);
 void freeList(List_t *list);
+
+#endif //LL_H

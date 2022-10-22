@@ -3,9 +3,9 @@
 #include <math.h>
 #include "stacklib.h"
 #include "shogilib.h"
-#include "linkedlist/linkedlist.h"
 #include <string.h>
 #include <ctype.h>
+// #include "linkedlist/linkedlist.h"
 Attr_t pieceAttr[14];
 Board_t bannmenn;
 UserInput_t input;
@@ -59,7 +59,6 @@ void initialize()
 void readKifu(FILE *file)
 {
     
-    // TODO use linkedlist to read kifu file
     if (file != NULL)
     {
         char *buffer = (char*) malloc(150 * sizeof(char));
@@ -148,12 +147,14 @@ void exportToSFEN(char *str)
 bool SFENParse(char *sfen)
 {
     SfenData_t sfenData;
+    char * temp = (char*) malloc(150*sizeof(char));
+    strcpy(temp, sfen);
     const char delim[2] = " ";
     char *token;
     char *rawSfenBoard;
-    if (Regex(sfen, SFEN_REGEX) == 0)
+    if (Regex(temp, SFEN_REGEX) == 0)
     {
-        token = strtok(sfen, delim);
+        token = strtok(temp, delim);
         rawSfenBoard = token;
         token = strtok(NULL, delim);
         sfenData.turn = *token;
@@ -172,6 +173,7 @@ bool SFENParse(char *sfen)
     else
         return 1;
     SFENLoad(sfenData);
+    free(temp);
     return 0;
 }
 // shows the board based on current database
@@ -337,14 +339,37 @@ enum
     PREV,
     NEXT
 };
-void scrollKifu(bool function)
+void scrollKifu(bool function, Node_t *current)
 {
-    // if(function == PREV){
 
-    // }
-    // else{
-
-    // }
+    if(function == NEXT){
+        if(current->next != NULL){
+            initializeBoard();
+            // SFENParse May corrupt the data. needs to fix.
+            SFENParse(current->next->data);
+            renderBoard();
+            *current = *(current->next);
+        }
+            
+        else puts("reached the last element of kifulist.");
+    }
+    else{
+        Node_t ptr = *(kifuList->head);
+        if(current->data == kifuList->head->data){
+            puts("reached the first element of kifulist.");
+        }else{
+            while(ptr.next->data != current->data){
+            ptr = *(ptr.next);
+            }
+            *current = ptr;
+            initializeBoard();
+            SFENParse(current->data);
+            renderBoard();
+            
+        }
+        
+    }
+        
 }
 // let user enter the move to interact with the shogi board
 int userInput()
@@ -413,7 +438,6 @@ void makeMove(Location_t init, Location_t final, bool promote)
     if (init.X == 0 && init.Y == 0)
     {
 
-        // TODO fix the owner issue and combine the mochikoma subtraction in ValidMove to here
         if (bannmenn.turn == SENTE)
         {
             bannmenn.senteKomadai.komaList[getPieceNumByName(input.type)]--;
@@ -460,7 +484,6 @@ char owner(char pieceType)
 bool validMove(Location_t init, Location_t final)
 {
     Location_t diff;
-    // TODO mochikoma utsu detection
     // need to combine with Makemove
     if (init.X == 0 && init.Y == 0)
     {
