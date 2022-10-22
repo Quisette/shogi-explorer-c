@@ -2,6 +2,7 @@
 #include "utilities.h"
 #include "shogilib.h"
 #include "stacklib.h"
+#include"linkedlist/linkedlist.h"
 #include <string.h>
 #include <regex.h>
 
@@ -9,7 +10,7 @@ extern Attr_t pieceAttr[14];
 extern Board_t bannmenn;
 extern UserInput_t input;
 extern Stack_t kifuStack;
-
+extern List_t *kifuList;
 int main(int argc, char **argv)
 {
     FILE *fptr;
@@ -35,6 +36,9 @@ int main(int argc, char **argv)
         {
             fptr = fopen(argv[2], "r");
             readKifu(fptr);
+            if (!SFENParse(kifuList->head->data))
+                renderBoard();
+            else puts("SFEN parsing failed\n");
         }
         else
         {

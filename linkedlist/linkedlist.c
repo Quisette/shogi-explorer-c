@@ -24,7 +24,7 @@ void append(char* str, List_t *list){
     list->tail->next = newNode;
     list->tail = newNode;
 }
-void print(List_t list){
+void printList(List_t list){
     int count = 0;
     Node_t *ptr = list.head;
     while(ptr  != NULL){

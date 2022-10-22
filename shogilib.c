@@ -3,12 +3,14 @@
 #include <math.h>
 #include "stacklib.h"
 #include "shogilib.h"
+#include "linkedlist/linkedlist.h"
 #include <string.h>
 #include <ctype.h>
 Attr_t pieceAttr[14];
 Board_t bannmenn;
 UserInput_t input;
 Stack_t kifuStack;
+List_t *kifuList;
 
 char *token;
 // initialize the project;
@@ -56,17 +58,20 @@ void initialize()
 // reads KIF file into the program.
 void readKifu(FILE *file)
 {
+    
     // TODO use linkedlist to read kifu file
-    char buffer[150] = "";
     if (file != NULL)
     {
+        char *buffer = (char*) malloc(150 * sizeof(char));
+        if(fgets(buffer, 150, file) != NULL)
+            kifuList = initializeList(buffer);
+        buffer = (char*) malloc(150 * sizeof(char));
         while (fgets(buffer, 150, file) != NULL)
         {
-            // puts(buffer);
-            push(buffer, &kifuStack);
-            buffer[0] = '\0';
+            append(buffer, kifuList);
+            buffer = (char*) malloc(150 * sizeof(char));
         }
-        // inspectStack(&kifuStack);
+        printList(*kifuList);
     }
 }
 // shows the current sfen (map of current bannmenn)

@@ -18,5 +18,5 @@ typedef struct LinkedList{
 Node_t *genNode(char* str);
 List_t *initializeList(char* FirstNodeData);
 void append(char* str, List_t *list);
-void print(List_t list);
+void printList(List_t list);
 void freeList(List_t *list);
