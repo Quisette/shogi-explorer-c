@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     char sfenBuffer[150] = "";
     initialize();
     initializeStack(&kifuStack);
-    // printf("%d",argc);
+
     if (argc >= 3) {
         if ((strcmp(argv[1], "--readsfen") == 0)) {
             fptr = fopen(argv[2], "r");
@@ -41,8 +41,10 @@ int main(int argc, char **argv) {
                     scrollKifu(1, &currentState);
                 else if (arg == 'b')
                     scrollKifu(0, &currentState);
+                else if (arg == 'q')
+                    break;
             }
-
+            return 0;
         } else {
             printf("file opening failed. turn to initial board. \n");
             push(initSfen, &kifuStack);

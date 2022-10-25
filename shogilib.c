@@ -537,11 +537,11 @@ bool validMove(Location_t init, Location_t final) {
 
 bool kinMove(Location_t loc, bool owner) {
     if (owner == SENTE) {
-        if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == -1 && abs(loc.X) == 1))
+        if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == 1 && abs(loc.X) == 1))
             return true;
     }
 
-    else if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == 1 && abs(loc.X) == 1))
+    else if (max(abs(loc.X), abs(loc.Y)) == 1 && !(loc.Y == -1 && abs(loc.X) == 1))
         return true;
 
     return false;
