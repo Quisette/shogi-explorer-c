@@ -113,19 +113,19 @@ char *getPieceName(Piece_t piece);
 void makeMove(Location_t init, Location_t final, bool promote);
 // Gets the owner based on Piece.type
 char owner(char pieceType);
-// Validate if kinshou and other promoted pieces with equivalent move rule moves correctly. 
+// Validates if kinshou and other promoted pieces with equivalent move rule moves correctly. 
 bool kinMove(Location_t loc, bool owner);
-// Validate if the pieces moves correctly. 
+// Validates if the pieces moves correctly. 
 bool validMove(Location_t init, Location_t final);
-// Validate if oushou and gyokushou moves correctly. 
+// Validates if oushou and gyokushou moves correctly. 
 bool gyokuMove(Location_t loc);
 // get piece enumeraion number based on string of romaji.
 int getPieceNumByName(char *str);
 // detects the move rule based on 
 bool kinDetection(char type, Location_t diff);
-// Validate if kakugyou moves correctly. 
+// Validates if kakugyou moves correctly. 
 bool kakuMove(Location_t diff, Location_t init);
-// Validate if hisya moves correctly. 
+// Validates if hisya moves correctly. 
 bool hisyaMove(Location_t diff, Location_t init);
 // Generate kifu based on played game on quit.
 void generateKifu(Stack_t *stack);
