@@ -421,7 +421,17 @@ bool validMove(Location_t init, Location_t final) {
         if (getPieceBycoord(final)->type != ' ') {
             printf("You're putting your own pieces on a existing piece. \n");
             return false;
-        } else if (bannmenn.turn == SENTE) {
+        } else if(strcmp(input.type, "fu" ) == 0){
+            Location_t tempLoc;
+            tempLoc.X = final.X;
+            for (tempLoc.Y = 1; tempLoc.Y <= 9; tempLoc.Y++ ){
+                if(tolower( getPieceBycoord(tempLoc)->type )== 'p' && getPieceBycoord(tempLoc)->promoted == false ){
+                    printf("Nifu desu. \n");
+                    return false;
+                }       
+            }
+        } 
+        else if (bannmenn.turn == SENTE) {
             if (bannmenn.senteKomadai.komaList[getPieceNumByName(input.type)] == 0) {
                 printf("You have no sufficient piece to put on the board. \n");
                 return false;
@@ -647,4 +657,19 @@ void initializeBoard() {
             bannmenn.pieces[i][j].type = ' ';
         }
     bannmenn.turn = 0;
+}
+bool forcePromote(){
+    int invalidRowLimit;
+    if(strcmp(input.type, "kei") == 0)
+        invalidRowLimit = 2;
+    else if (strcmp(input.type, "kyo") == 0 ||strcmp(input.type, "fu") == 0 )
+        invalidRowLimit = 1;
+    else return false;
+        if (bannmenn.turn == SENTE) {
+            if (input.final.Y <= invalidRowLimit || input.init.Y <= invalidRowLimit) return true;
+        } else {
+            if (input.final.Y >= 10 - invalidRowLimit || input.init.Y >= 10 - invalidRowLimit ) return true;
+        }
+    return false;
+    
 }

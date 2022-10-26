@@ -71,14 +71,15 @@ int main(int argc, char **argv) {
         } else if (validMove(input.init, input.final)) {
             sfenBuffer[0] = '\0';
 
-            if (getPieceBycoord(input.init)->promoted == true) {
+            if (getPieceBycoord(input.init)->promoted == true || forcePromote()) {
                 makeMove(input.init, input.final, 1);
+
             } else if (canPromote()) {
                 int promote;
-                char buffer[7];
+                char buffer[10];
 
                 printf("<<成りますか？>>(naru, narazu)\n>>");
-                while (fgets(buffer, 7, stdin)) {
+                while (fgets(buffer, 10, stdin)) {
                     if (strcmp(buffer, "naru\n") == 0) {
                         makeMove(input.init, input.final, 1);
                         break;

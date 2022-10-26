@@ -135,4 +135,7 @@ bool canPromote();
 bool revert();
 // initializes the basic data used.
 void initializeBoard();
+// force promotion detection in keima, kyousha and fuhyou.
+bool forcePromote();
+// TODO force not drop on forcepromote area for fu, kyo, kei
 #endif  // SHOGI_LIB
