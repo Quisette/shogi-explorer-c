@@ -250,7 +250,7 @@ void renderBoard() {
     puts("------------------");
 
     printf("%d手目、", bannmenn.moveNumber);
-    (bannmenn.turn) ? printf("後手番です\n") : printf("先手番です\n");
+    (bannmenn.turn) ? printColor(RED,"後手番です\n") : printColor(BLUE, "先手番です\n");
     puts("------------------");
     // displays Board
     for (int i = 0; i < 9; i++) {
@@ -301,7 +301,6 @@ void scrollKifu(bool function, Node_t *current) {
             renderBoard();
             *current = *(current->next);
         }
-
         else
             puts("reached the last element of kifulist.");
     } else {

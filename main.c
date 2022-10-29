@@ -36,14 +36,38 @@ int main(int argc, char **argv) {
 
             Node_t currentState = *(kifuList->head);
             char arg;
+            // printf("\n>>");
+            system("/bin/stty raw");
             while (arg = getc(stdin)) {
-                if (arg == 'f')
+                system ("/bin/stty cooked");
+                
+                if (arg == 'f'){
+                    puts("");
                     scrollKifu(1, &currentState);
-                else if (arg == 'b')
+                    printf(">>");
+                    system("/bin/stty raw");
+                }
+                else if (arg == 'b'){
+                    puts("");
                     scrollKifu(0, &currentState);
-                else if (arg == 'q')
+                    printf(">>");
+                    system("/bin/stty raw");
+                }
+                else if (arg == 'q'){
+                    
+                    // system ("/bin/stty cooked");
                     break;
+                
+                }else{
+                    printf("\ninvalid input.\n");//faulty on front \n
+                    printf(">>");
+                    system("/bin/stty raw");
+
+                }
+               
+                
             }
+            
             return 0;
         } else {
             printf("file opening failed. turn to initial board. \n");
