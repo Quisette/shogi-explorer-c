@@ -7,10 +7,10 @@
 #include "stacklib.h"
 #include "utilities.h"
 
-extern Attr_t pieceAttr[14];
-extern Board_t bannmenn;
-extern UserInput_t input;
-extern Stack_t kifuStack;
+extern Attr pieceAttr[14];
+extern Board bannmenn;
+extern UserInput input;
+extern Stack kifuStack;
 extern LinkedList kifuList;
 int main(int argc, char **argv) {
     FILE *fptr;

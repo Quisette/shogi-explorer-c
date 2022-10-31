@@ -8,10 +8,10 @@
 
 #include "stacklib.h"
 // #include "linkedlist/linkedlist.h"
-Attr_t pieceAttr[14];
-Board_t bannmenn;
-UserInput_t input;
-Stack_t kifuStack;
+Attr pieceAttr[14];
+Board bannmenn;
+UserInput input;
+Stack kifuStack;
 LinkedList kifuList;
 
 char *token;
@@ -613,7 +613,7 @@ bool hisyaMove(Location_t diff, Location_t init) {
     } else
         return false;
 }
-void generateKifu(Stack_t *stack) {
+void generateKifu(Stack *stack) {
     FILE *fileptr;
     fileptr = fopen("./kifu.sfenlist", "w");
     if (fileptr == NULL) {

@@ -11,12 +11,12 @@
 #define SFEN_REGEX "[+plnsgkrbPLNSGKRB1-9]{1,18}\\/[+plnsgkrbPLNSGKRB1-9]{1,18}\\/[+plnsgkrbPLNSGKRB1-9]{1,18}\\/[+plnsgkrbPLNSGKRB1-9]{1,18}\\/[+plnsgkrbPLNSGKRB1-9]{1,18}\\/[+plnsgkrbPLNSGKRB1-9]{1,18}\\/[+plnsgkrbPLNSGKRB1-9]{1,18}\\/[+plnsgkrbPLNSGKRB1-9]{1,18}\\/[+plnsgkrbPLNSGKRB1-9]{1,18} [wb] [-plnsgkrbPLNSGKRB1-9]+ [1-9]+"
 #define INPUT_REGEX "[0-9]{1,2}\\s[1-9]{1,2}"
 #define INPUT_REGEX_FULL "[0-9]{1,2}\\s[1-9]{1,2}\\s[a-z]{2,7}"
-typedef struct Attr Attr_t;
+typedef struct Attr Attr;
 typedef struct Komadai Komadai_t;
-typedef struct UserInput UserInput_t;
+typedef struct UserInput UserInput;
 typedef struct Location Location_t;
 typedef struct Piece Piece_t;
-typedef struct Board Board_t;
+typedef struct Board Board;
 typedef struct SfenData SfenData_t;
 
 // Enumation of type of pieces
@@ -128,7 +128,7 @@ bool kakuMove(Location_t diff, Location_t init);
 // Validates if hisya moves correctly. 
 bool hisyaMove(Location_t diff, Location_t init);
 // Generate kifu based on played game on quit.
-void generateKifu(Stack_t *stack);
+void generateKifu(Stack *stack);
 // Shows if the piece can promote.
 bool canPromote();
 // reverts the move made by user. 

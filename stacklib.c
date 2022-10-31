@@ -2,28 +2,28 @@
 
 #include <stdio.h>
 // #define SHOW_PUSH_POP
-void initializeStack(Stack_t *stack) {
+void initializeStack(Stack *stack) {
     stack->top = -1;
 }
-bool isEmpty(Stack_t *stack) {
+bool isEmpty(Stack *stack) {
     if (stack->top == -1)
         return 1;
     else
         return 0;
 }
 
-bool isFull(Stack_t *stack) {
+bool isFull(Stack *stack) {
     if (stack->top == MAX_STACK_SIZE)
         return 1;
     else
         return 0;
 }
 
-char *peek(Stack_t *stack) {
+char *peek(Stack *stack) {
     return stack->stack[stack->top];
 }
 
-char *pop(Stack_t *stack) {
+char *pop(Stack *stack) {
     char *data;
 
     if (!isEmpty(stack)) {
@@ -38,7 +38,7 @@ char *pop(Stack_t *stack) {
     }
 }
 
-void push(char *data, Stack_t *stack) {
+void push(char *data, Stack *stack) {
     if (!isFull(stack)) {
         stack->top = stack->top + 1;
         strcpy(stack->stack[stack->top], data);
@@ -49,15 +49,15 @@ void push(char *data, Stack_t *stack) {
         printf("Could not insert data, Stack is full.\n");
     }
 }
-void inspectStack(Stack_t *stack) {
+void inspectStack(Stack *stack) {
     for (int i = stack->top; i >= 0; i--) {
         if (!isEmpty(stack))
             printf("E:: ");
         puts(stack->stack[i]);
     }
 }
-void reverse(Stack_t *stack) {
-    Stack_t *tempStack = malloc(1 * sizeof(Stack_t));
+void reverse(Stack *stack) {
+    Stack *tempStack = malloc(1 * sizeof(Stack));
     initializeStack(tempStack);
     while (!isEmpty(stack)) {
         push(pop(stack), tempStack);
