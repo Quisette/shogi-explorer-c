@@ -12,7 +12,7 @@ Attr_t pieceAttr[14];
 Board_t bannmenn;
 UserInput_t input;
 Stack_t kifuStack;
-List_t *kifuList;
+LinkedList kifuList;
 
 char *token;
 // initialize the project;
@@ -58,15 +58,21 @@ void initialize() {
 }
 // reads KIF file into the program.
 void readKifu(FILE *file) {
+    initializeList(&kifuList);
     if (file != NULL) {
         char *buffer = (char *)malloc(150 * sizeof(char));
-        if (fgets(buffer, 150, file) != NULL) kifuList = initializeList(buffer);
-        buffer = (char *)malloc(150 * sizeof(char));
-        while (fgets(buffer, 150, file) != NULL) {
-            append(buffer, kifuList);
-            buffer = (char *)malloc(150 * sizeof(char));
+        while(fgets(buffer, 150, file) != NULL){
+            pushBack(&kifuList, createNode(buffer));
+            buffer = (char*)malloc(150 * sizeof(char));
         }
-        printList(*kifuList);
+        print(kifuList);
+        // if (fgets(buffer, 150, file) != NULL) kifuList = initializeList(buffer);
+        // buffer = (char *)malloc(150 * sizeof(char));
+        // while (fgets(buffer, 150, file) != NULL) {
+        //     append(buffer, kifuList);
+        //     buffer = (char *)malloc(150 * sizeof(char));
+        // }
+        // printList(*kifuList);
     }
 }
 // stores the current sfen into the input string pointer.
@@ -292,7 +298,7 @@ void renderBoard() {
 // let the user browse through shogi moves
 enum { PREV,
        NEXT };
-void scrollKifu(bool function, Node_t *current) {
+void scrollKifu(bool function, Node *current) {
     if (function == NEXT) {
         if (current->next != NULL) {
             initializeBoard();
@@ -304,8 +310,8 @@ void scrollKifu(bool function, Node_t *current) {
         else
             puts("reached the last element of kifulist.");
     } else {
-        Node_t ptr = *(kifuList->head);
-        if (current->data == kifuList->head->data) {
+        Node ptr = *(*kifuList.head);
+        if (current->data == (*kifuList.head)->data) {
             puts("reached the first element of kifulist.");
         } else {
             while (ptr.next->data != current->data) {

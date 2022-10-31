@@ -92,7 +92,7 @@ void exportToSFEN(char *str);
 // shows the board based on current database+
 void renderBoard();
 // let the user browse through shogi moves
-void scrollKifu(bool function, Node_t *current);
+void scrollKifu(bool function, Node *current);
 // let user enter the move to interact with the shogi board
 int userInput();
 // back to the origin from user inputs

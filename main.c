@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "linkedlist/linkedlist.h"
+// #include "linkedlist/linkedlist.h"
 #include "shogilib.h"
 #include "stacklib.h"
 #include "utilities.h"
@@ -11,7 +11,7 @@ extern Attr_t pieceAttr[14];
 extern Board_t bannmenn;
 extern UserInput_t input;
 extern Stack_t kifuStack;
-extern List_t *kifuList;
+extern LinkedList kifuList;
 int main(int argc, char **argv) {
     FILE *fptr;
     char initSfen[100] = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1";
@@ -29,12 +29,12 @@ int main(int argc, char **argv) {
         } else if (strcmp(argv[1], "--loadsfenlist") == 0) {
             fptr = fopen(argv[2], "r");
             readKifu(fptr);
-            if (!SFENParse(kifuList->head->data))
+            if (!SFENParse((char*)(**(kifuList.head)).data))
                 renderBoard();
             else
                 puts("SFEN parsing failed\n");
 
-            Node_t currentState = *(kifuList->head);
+            Node currentState = *(*kifuList.head);
             char arg;
             // printf("\n>>");
             system("/bin/stty raw");
@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
                 }
                 else if (arg == 'q'){
                     
-                    // system ("/bin/stty cooked");
+                    system ("/bin/stty cooked");
                     break;
                 
                 }else{

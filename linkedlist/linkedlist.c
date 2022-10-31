@@ -1,47 +1,91 @@
+// This is a double pointer version of linked list.
+
 #include "linkedlist.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "../utilities.h"
-
-Node_t *genNode(char *str) {
-    Node_t *node = (Node_t *)malloc(sizeof(Node_t));
-    node->next = NULL;
-    node->data = str;
-    return node;
+Node *createNode(void* data){
+    Node *p = malloc(sizeof(Node));
+    (p->data) = (char*) data;
+    p->next = NULL;
+    return p;
 }
 
-List_t *initializeList(char *firstNodeData) {
-    List_t *list = (List_t *)malloc(sizeof(List_t));
-    Node_t *node = genNode(firstNodeData);
-    list->head = node;
-    list->tail = node;
-    return list;
+void pushFront(LinkedList *list, Node *newNode){
+    newNode->next = *list->head;
+    *list->head = newNode;
 }
 
-void append(char *str, List_t *list) {
-    Node_t *newNode = genNode(str);
-    list->tail->next = newNode;
-    list->tail = newNode;
+void pushBack(LinkedList *list, Node *newNode){
+    Node **tracer;
+    tracer = list->head;
+    while(*tracer){
+        tracer = &(*tracer)-> next;
+    }
+    newNode -> next = *tracer;
+    *tracer = newNode;
+    *list->tail = newNode;
 }
-void printList(List_t list) {
-    int count = 0;
-    Node_t *ptr = list.head;
-    while (ptr != NULL) {
-        printf("L:: %s\n", ptr->data);
-        ptr = ptr->next;
+
+void insertInOrder(LinkedList *list, Node *node){
+    Node **curr = list->head;
+    while(*curr && (*curr)->data < node->data){
+        curr = &((*curr)->next);
+    }
+    node->next = *curr;
+    *curr = node;
+    if(!*list->tail) getTail(list);
+    else if((*list->tail)->next != NULL)
+        *list->tail = (*list->tail)->next;
+}
+void print(LinkedList list){
+    Node *tracer = *list.head; // we want to make a copy of a value, so we do not use double pointers.
+    
+    while(tracer){
+        printf("(%s)->", (char*)tracer->data);// this can be edited 
+        tracer = (tracer)->next;
+    }
+    printf("NULL\n");
+    
+}
+
+
+
+void initializeList(LinkedList *list){
+    list->head = malloc(sizeof(LinkedList*)); //  pointer to pointer declaration
+    list->tail = malloc(sizeof(LinkedList*));
+}
+
+void getTail(LinkedList *list){
+    Node * tracer   = *list->head;
+    while(tracer){
+        if((tracer)->next == NULL){
+            printf("reached\n");
+            *(list->tail) = tracer;
+            // printf("%d\n", (*list->tail)->data);
+            return;
+        }
+        tracer = (tracer) ->next;
     }
 }
-void delete (char *str, List_t *list) {
-}
-void freeList(List_t *list) {
-    Node_t *temp;
-    while (list->head != NULL) {
-        temp = list->head;
-        list->head = temp->next;
-        free(temp);
-    }
-    free(list);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
