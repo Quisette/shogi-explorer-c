@@ -128,7 +128,7 @@ bool kakuMove(Location_t diff, Location_t init);
 // Validates if hisya moves correctly. 
 bool hisyaMove(Location_t diff, Location_t init);
 // Generate kifu based on played game on quit.
-void generateKifu(Stack *stack);
+void generateKifu(LinkedList list);
 // Shows if the piece can promote.
 bool canPromote();
 // reverts the move made by user. 

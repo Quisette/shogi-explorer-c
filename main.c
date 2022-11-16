@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
             push(sfenBuffer, &kifuStack);
             if (!SFENParse(sfenBuffer))
                 renderBoard();
-        } else if (strcmp(argv[1], "--loadsfenlist") == 0) {
+        } else if (strcmp(argv[1], "--replay") == 0) {
             fptr = fopen(argv[2], "r");
             readKifu(fptr);
             if (!SFENParse((char*)(**(kifuList.head)).data))
@@ -71,12 +71,12 @@ int main(int argc, char **argv) {
             return 0;
         } else {
             printf("file opening failed. turn to initial board. \n");
-            push(initSfen, &kifuStack);
+            pushBack(&kifuList, createNode(initSfen) );
             if (!SFENParse(initSfen))
                 renderBoard();
         }
     } else {
-        push(initSfen, &kifuStack);
+        pushBack(&kifuList, createNode(initSfen) );
         if (!SFENParse(initSfen))
             renderBoard();
     }
@@ -120,13 +120,15 @@ int main(int argc, char **argv) {
 
             renderBoard();
             exportToSFEN(sfenBuffer);
-            push(sfenBuffer, &kifuStack);
+            pushBack(&kifuList,createNode(sfenBuffer));
+            // push(sfenBuffer, &kifuStack);
         }
 
         else
             printf("Invalid move.\n");
     }
-    reverse(&kifuStack);
-    generateKifu(&kifuStack);
+    generateKifu(kifuList);
+    // reverse(&kifuStack);
+    // generateKifu(&kifuStack);
     return 0;
 }

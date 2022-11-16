@@ -55,10 +55,11 @@ void initialize() {
     pieceAttr[KAKU].name[1] = "uma";
     pieceAttr[HI].name[1] = "ryu";
     pieceAttr[GYOKU].name[1] = "gyoku";
+    initializeList(&kifuList);
 }
 // reads KIF file into the program.
 void readKifu(FILE *file) {
-    initializeList(&kifuList);
+    
     if (file != NULL) {
         char *buffer = (char *)malloc(150 * sizeof(char));
         while(fgets(buffer, 150, file) != NULL){
@@ -613,13 +614,17 @@ bool hisyaMove(Location_t diff, Location_t init) {
     } else
         return false;
 }
-void generateKifu(Stack *stack) {
+void generateKifu(LinkedList list) {
     FILE *fileptr;
     fileptr = fopen("./kifu.sfenlist", "w");
     if (fileptr == NULL) {
         printf("!!!!!\n");
     } else {
-        while (!isEmpty(stack)) fprintf(fileptr, "%s\n", pop(stack));
+        Node* tracer = (*list.head);
+        while(tracer){
+            fprintf(fileptr, "%s\n", tracer->data);
+            tracer = tracer->next;
+        }
     }
     fclose(fileptr);
 }

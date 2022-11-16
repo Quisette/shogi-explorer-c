@@ -6,7 +6,7 @@
 #define LL_H
 typedef struct Node{
     struct Node *prev;
-    void * data;
+    char * data;
     struct Node *next;
 }Node;
 
@@ -22,10 +22,10 @@ typedef struct LinkedList
 // void insertInOrder(Node **list, node *newNode);
 void pushFront(LinkedList *list, Node *newNode);
 void pushBack(LinkedList *list, Node *newNode);
-Node *createNode(void* data);
+Node *createNode(char* data);
 void insertInOrder(LinkedList *list, Node *node);
 void print(LinkedList list);
 void initializeList(LinkedList *list);
 void getTail(LinkedList *list);
-
+void DeleteLast(LinkedList *list);
 #endif //LL_H

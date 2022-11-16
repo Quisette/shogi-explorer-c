@@ -2,9 +2,11 @@
 
 #include "linkedlist.h"
 
-Node *createNode(void* data){
+Node *createNode(char* data){
+    char* str = malloc(150 * sizeof(char));
+    stpcpy(str, data);
     Node *p = malloc(sizeof(Node));
-    (p->data) = (char*) data;
+    (p->data) =  str;
     p->next = NULL;
     return p;
 }
@@ -15,13 +17,17 @@ void pushFront(LinkedList *list, Node *newNode){
 }
 
 void pushBack(LinkedList *list, Node *newNode){
-    Node **tracer;
-    tracer = list->head;
-    while(*tracer){
-        tracer = &(*tracer)-> next;
+    Node *tracer;
+    if(*list->head == NULL) {
+        *list->head = newNode;
+        *list->tail = newNode;
+        return;
     }
-    newNode -> next = *tracer;
-    *tracer = newNode;
+    tracer = *list->head;
+    while(tracer->next){
+        tracer = (tracer)-> next;
+    }
+    tracer->next = newNode;
     *list->tail = newNode;
 }
 
@@ -40,13 +46,12 @@ void print(LinkedList list){
     Node *tracer = *list.head; // we want to make a copy of a value, so we do not use double pointers.
     
     while(tracer){
-        printf("(%s)->", (char*)tracer->data);// this can be edited 
+        printf("(%s)->", tracer->data);// this can be edited 
         tracer = (tracer)->next;
     }
     printf("NULL\n");
     
 }
-
 
 
 void initializeList(LinkedList *list){
@@ -68,7 +73,19 @@ void getTail(LinkedList *list){
 }
 
 
+void DeleteLast(LinkedList *list) {
+    Node* toDelete;
+    Node * tracer ;
+    tracer = *list->head;
+    while((tracer)->next->next){
+        tracer = (tracer)->next; 
+    }
+    *list->tail = (tracer);
+    toDelete = (*list->tail)->next; 
+    (*list->tail) -> next = NULL;
+    free(toDelete);
 
+}
 
 
 
